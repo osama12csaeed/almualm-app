@@ -210,7 +210,13 @@ function Breadcrumb({ crumbs, title }: { crumbs: NonNullable<FileDetail['breadcr
 
 /* ---------------- 3. PDF viewer: scroll through pages and zoom, inside the page ---------------- */
 
-function PdfViewer({
+/**
+ * Zoom is left entirely to the viewer (pinch / double tap). Its zoom level must never be fed back
+ * as the `scale` prop: on Android every prop change reloads the document and re-applies `scale`,
+ * which made a pinch zoom in again and again without stopping.
+ * Memoised so the page's scroll lock (state in the parent) doesn't re-render the viewer.
+ */
+const PdfViewer = React.memo(function PdfViewer({
   detail, pdf, pdfIndex, onReady, onLockPage,
 }: { detail: FileDetail; pdf: PdfItem; pdfIndex: number; onReady: (uri: string) => void; onLockPage: (locked: boolean) => void }) {
   const { c, dark } = useTheme();
@@ -222,7 +228,6 @@ function PdfViewer({
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(startPage);
   const [total, setTotal] = useState(0);
-  const [scale, setScale] = useState(1);
   const [goTo, setGoTo] = useState<number | undefined>(startPage > 1 ? startPage : undefined);
   const [pageInput, setPageInput] = useState(String(startPage));
   const [attempt, setAttempt] = useState(0);
@@ -262,6 +267,10 @@ function PdfViewer({
     else setPageInput(String(page));
   };
 
+  // Stable props: the native viewer reloads the whole file whenever a prop changes.
+  const source = useMemo(() => (uri ? { uri } : null), [uri]);
+  const pdfStyle = useMemo(() => ({ flex: 1, backgroundColor: dark ? '#05080f' : '#d4d4d7' }), [dark]);
+
   const openFull = () => router.push({ pathname: '/read/[id]', params: { id: String(detail.id), pdf: String(pdfIndex) } });
   const toolColor = c.text;
 
@@ -273,14 +282,6 @@ function PdfViewer({
           <Fa name="expand" size={15} color={toolColor} />
           <Text style={{ color: toolColor, fontSize: 12 }}>ملء الشاشة</Text>
         </Pressable>
-        <View style={styles.zoom}>
-          <Pressable accessibilityRole="button" accessibilityLabel="تصغير" onPress={() => setScale((s) => Math.max(1, +(s - 0.25).toFixed(2)))} hitSlop={6} style={styles.tool}>
-            <Fa name="minus" size={15} color={scale > 1 ? toolColor : c.textMuted} />
-          </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="تكبير" onPress={() => setScale((s) => Math.min(3, +(s + 0.25).toFixed(2)))} hitSlop={6} style={styles.tool}>
-            <Fa name="plus" size={15} color={toolColor} />
-          </Pressable>
-        </View>
         <View style={{ flex: 1 }} />
         <View style={styles.pageBox}>
           <TextInput
@@ -319,26 +320,24 @@ function PdfViewer({
           onTouchCancel={() => onLockPage(false)}
         >
           <Pdf
-            source={{ uri }}
+            source={source!}
             page={goTo}
-            scale={scale}
             minScale={1}
             maxScale={4}
             fitPolicy={0}
             spacing={10}
             enableDoubleTapZoom
             enableAntialiasing
-            style={{ flex: 1, backgroundColor: dark ? '#05080f' : '#d4d4d7' }}
+            style={pdfStyle}
             onLoadComplete={(n) => setTotal(n)}
             onPageChanged={onPage}
-            onScaleChanged={(s) => setScale(s)}
             onError={() => setError('الملف تالف أو غير مكتمل. أعد تحميله.')}
           />
         </View>
       )}
     </View>
   );
-}
+});
 
 /* ---------------- 4. «تحميل الملف» ---------------- */
 
@@ -517,7 +516,6 @@ const styles = StyleSheet.create({
   toolbar: { flexDirection: 'row', alignItems: 'center', minHeight: 46, paddingHorizontal: 6, borderBottomWidth: 1 },
   tool: { minWidth: 40, minHeight: 40, alignItems: 'center', justifyContent: 'center' },
   fullBtn: { flexDirection: 'row', gap: 6, paddingHorizontal: 6 },
-  zoom: { flexDirection: 'row', alignItems: 'center' },
   pageBox: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingEnd: 4 },
   pageInput: { width: 54, height: 34, borderWidth: 1, borderRadius: 4, textAlign: 'center', fontSize: 15, paddingVertical: 0, fontFamily: font.regular },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[3], padding: space[5] },
