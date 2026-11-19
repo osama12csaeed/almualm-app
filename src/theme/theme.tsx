@@ -11,9 +11,9 @@ const light = {
   borderInput: '#7b8597',
   text: '#0f172a',
   textMuted: '#526077',
-  accent: '#1d4ed8',
+  accent: '#035dcd', // almualm.com brand blue
   onAccent: '#ffffff',
-  highlight: '#f59e0b',
+  highlight: '#f87829', // the site's orange
   onHighlight: '#1f1300',
   danger: '#b42318',
   success: '#157347',
@@ -40,10 +40,11 @@ const dark: typeof light = {
 };
 
 export const BADGE_COLORS: Record<string, string> = {
-  كتاب: '#1d4ed8',
-  اوراق: '#c2410c',
-  اختبار: '#4b5563',
-  مراجعة: '#7c3aed',
+  // Same as the website's badges (darkened automatically where white text needs it).
+  كتاب: '#4a83fa',
+  اوراق: '#f87829',
+  اختبار: '#abb8d4',
+  مراجعة: '#a0a0a0',
   حل: '#15803d',
   ملخص: '#0e7490',
   تحضير: '#a16207',
