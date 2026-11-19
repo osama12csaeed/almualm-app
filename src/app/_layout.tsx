@@ -6,9 +6,9 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
-import { Cairo_400Regular } from '@expo-google-fonts/cairo/400Regular';
-import { Cairo_600SemiBold } from '@expo-google-fonts/cairo/600SemiBold';
-import { Cairo_700Bold } from '@expo-google-fonts/cairo/700Bold';
+import { Almarai_400Regular } from '@expo-google-fonts/almarai/400Regular';
+import { Almarai_700Bold } from '@expo-google-fonts/almarai/700Bold';
+import { Almarai_800ExtraBold } from '@expo-google-fonts/almarai/800ExtraBold';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,7 +33,7 @@ if (!I18nManager.isRTL) {
 const persister = createAsyncStoragePersister({ storage: AsyncStorage, key: 'almualm-query-cache' });
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({ Cairo_400Regular, Cairo_600SemiBold, Cairo_700Bold });
+  const [fontsLoaded] = useFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
   const hydrated = useStore((s) => s.hydrated);
 
   useEffect(() => {

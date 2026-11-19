@@ -4,7 +4,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Bookmark, BookmarkCheck, FolderOpen } from 'lucide-react-native';
 import { useNode, useNodeFiles } from '@/api/hooks';
 import { Screen } from '@/components/screen';
-import { EmptyState, ErrorState, FileRow, IconButton, ImageCard, Skeleton, Text } from '@/components/ui';
+import { EmptyState, ErrorState, IconButton, ImageCard, Skeleton, Text } from '@/components/ui';
+import { SiteCard } from '@/components/site';
 import { AdBanner } from '@/ads/ads';
 import { actions, useStore } from '@/store/store';
 import { radius, space, useTheme } from '@/theme/theme';
@@ -79,12 +80,14 @@ function Children({ node }: { node: ReturnType<typeof useNode> }) {
 }
 
 function Files({ files }: { files: ReturnType<typeof useNodeFiles> }) {
+  const { width: winW } = useWindowDimensions();
   const { c } = useTheme();
   const [filter, setFilter] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const all = files.data?.files ?? [];
   const badges = useMemo(() => Array.from(new Set(all.map((f) => f.badge))), [all]);
   const shown = filter ? all.filter((f) => f.badge === filter) : all;
+  const cardW = (winW - space[4] * 2 - 14) / 2;
 
   if (files.isLoading && !files.data) return <LoadingList />;
   if (files.isError && !files.data) return <ErrorState message={files.error.message} onRetry={() => files.refetch()} />;
@@ -93,7 +96,9 @@ function Files({ files }: { files: ReturnType<typeof useNodeFiles> }) {
     <FlatList
       data={shown}
       keyExtractor={(f) => String(f.id)}
-      contentContainerStyle={{ padding: space[4], gap: space[3] }}
+      numColumns={2}
+      columnWrapperStyle={{ gap: 14 }}
+      contentContainerStyle={{ padding: space[4], rowGap: 22 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -127,7 +132,7 @@ function Files({ files }: { files: ReturnType<typeof useNodeFiles> }) {
           </ScrollView>
         ) : undefined
       }
-      renderItem={({ item }) => <FileRow file={item} onPress={() => router.push({ pathname: '/file/[id]', params: { id: String(item.id) } })} />}
+      renderItem={({ item }) => <SiteCard file={item} width={cardW} onPress={() => router.push({ pathname: '/file/[id]', params: { id: String(item.id) } })} />}
       ListEmptyComponent={<EmptyState icon={<FolderOpen color={c.textMuted} size={44} />} title="لا توجد ملفات بعد" body="ستظهر هنا تلقائياً فور إضافتها في الموقع." />}
     />
   );

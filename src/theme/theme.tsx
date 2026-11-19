@@ -3,14 +3,17 @@ import { useColorScheme } from 'react-native';
 import { contrast, ensureReadableBadge, textOn } from '@/lib/core';
 
 /** Values from replica/design/tokens.json (checked for WCAG AA). */
+/** Light theme = almualm.com's own CSS (measured from the live post page). */
 const light = {
   bg: '#ffffff',
-  surface: '#f4f6fb',
+  surface: '#f9f9f9', // site boxes (download, follow, comments)
   card: '#ffffff',
-  border: '#e2e7f0',
-  borderInput: '#7b8597',
-  text: '#0f172a',
-  textMuted: '#526077',
+  border: '#dddddd',
+  borderSoft: '#dadada', // section title underline
+  borderInput: '#767676',
+  text: '#28303d',
+  heading: '#2b76bf', // site h1 / section titles
+  textMuted: '#5b6472',
   accent: '#035dcd', // almualm.com brand blue
   onAccent: '#ffffff',
   highlight: '#f87829', // the site's orange
@@ -26,8 +29,10 @@ const dark: typeof light = {
   surface: '#131c2e',
   card: '#131c2e',
   border: '#26324a',
+  borderSoft: '#26324a',
   borderInput: '#6b7890',
   text: '#e8edf7',
+  heading: '#8ab4ff',
   textMuted: '#a3afc4',
   accent: '#7aa2ff',
   onAccent: '#0b1220',
@@ -54,7 +59,8 @@ export const BADGE_COLORS: Record<string, string> = {
 
 export const space = [0, 4, 8, 12, 16, 24, 32, 48] as const;
 export const radius = { sm: 8, md: 12, lg: 18, pill: 999 } as const;
-export const font = { regular: 'Cairo_400Regular', medium: 'Cairo_600SemiBold', bold: 'Cairo_700Bold' } as const;
+// Almarai: the website's font.
+export const font = { regular: 'Almarai_400Regular', medium: 'Almarai_700Bold', bold: 'Almarai_800ExtraBold' } as const;
 export const type = {
   xs: { fontSize: 12, lineHeight: 18 },
   sm: { fontSize: 14, lineHeight: 22 },

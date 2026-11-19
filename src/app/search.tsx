@@ -9,7 +9,7 @@ import { AdBanner } from '@/ads/ads';
 import { useStore } from '@/store/store';
 import { normalizeArabic } from '@/lib/core';
 import type { FileSummary } from '@/api/types';
-import { radius, space, useTheme } from '@/theme/theme';
+import { font, radius, space, useTheme } from '@/theme/theme';
 
 export default function SearchScreen() {
   const { c } = useTheme();
@@ -97,5 +97,5 @@ export default function SearchScreen() {
 
 const styles = StyleSheet.create({
   box: { flexDirection: 'row', alignItems: 'center', margin: space[4], marginBottom: 0, borderWidth: 1, borderRadius: radius.md, paddingStart: space[3] },
-  input: { flex: 1, minHeight: 48, fontSize: 16, fontFamily: 'Cairo_400Regular', textAlign: 'right' },
+  input: { flex: 1, minHeight: 48, fontSize: 16, fontFamily: font.regular, textAlign: 'right' },
 });

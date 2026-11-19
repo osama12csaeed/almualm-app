@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
-import { MessageCircle, Reply } from 'lucide-react-native';
 import { keys, postComment, useComments } from '@/api/hooks';
 import type { Comment } from '@/api/types';
 import { Button, Text } from './ui';
+import { SiteHeading } from './site';
 import { actions, useStore } from '@/store/store';
 import { relativeDate } from '@/lib/core';
-import { radius, space, useTheme } from '@/theme/theme';
+import { font, radius, space, useTheme } from '@/theme/theme';
 
 /** The post's comments, as on the website: read them, reply, and add new ones. */
 export function Comments({ fileId, title }: { fileId: number; title: string }) {
@@ -31,12 +31,7 @@ export function Comments({ fileId, title }: { fileId: number; title: string }) {
 
   return (
     <View style={{ gap: space[3] }}>
-      <View style={styles.head}>
-        <MessageCircle color={c.text} size={20} />
-        <Text size="lg" weight="bold">
-          {data ? `${data.count} تعليق` : title}
-        </Text>
-      </View>
+      <SiteHeading title={data ? `${data.count} تعليق` : title} size={20} />
 
       {shown.map((cm) => (
         <View key={cm.id} style={{ gap: space[2] }}>
@@ -72,25 +67,18 @@ export function Comments({ fileId, title }: { fileId: number; title: string }) {
 }
 
 function CommentCard({ comment, onReply }: { comment: Comment; onReply?: () => void }) {
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   return (
-    <View style={[styles.card, { backgroundColor: c.surface, borderColor: comment.by_site ? c.accent : c.border }]}>
-      <View style={styles.cardHead}>
-        <Text weight="bold" size="sm" style={{ flex: 1 }} numberOfLines={1}>
-          {comment.author}
-          {comment.by_site ? ' · الموقع' : ''}
-        </Text>
-        <Text size="xs" muted>
-          {relativeDate(comment.date)}
-        </Text>
-      </View>
-      <Text size="sm">{comment.content}</Text>
+    <View style={[styles.card, { backgroundColor: c.surface, borderColor: comment.by_site ? c.accent : dark ? c.border : '#efefef' }]}>
+      <Text style={{ fontSize: 17, lineHeight: 26, color: c.text }} numberOfLines={1}>
+        {comment.author}
+        {comment.by_site ? ' · الموقع' : ''}
+      </Text>
+      <Text style={{ fontSize: 12, color: c.textMuted }}>{relativeDate(comment.date)}</Text>
+      <Text style={{ fontSize: 14, lineHeight: 24, color: c.text, marginTop: 6 }}>{comment.content}</Text>
       {onReply ? (
         <Pressable accessibilityRole="button" onPress={onReply} style={styles.reply} hitSlop={8}>
-          <Reply color={c.accent} size={16} />
-          <Text size="xs" weight="medium" color={c.accent}>
-            رد
-          </Text>
+          <Text style={{ fontSize: 16, color: c.text, textDecorationLine: 'underline' }}>رد</Text>
         </Pressable>
       ) : null}
     </View>
@@ -130,7 +118,7 @@ function CommentForm({ fileId, requireEmail, replyTo, onCancelReply }: { fileId:
   const input = [styles.input, { color: c.text, borderColor: c.borderInput, backgroundColor: c.bg }];
   return (
     <View style={[styles.form, { borderColor: c.border }]}>
-      <Text weight="bold">{replyTo ? `رد على ${replyTo.author}` : 'أضف تعليقاً'}</Text>
+      <Text style={{ color: c.heading, fontSize: 20, lineHeight: 30 }}>{replyTo ? `رد على ${replyTo.author}` : 'اترك تعليقاً'}</Text>
       {replyTo ? (
         <Pressable onPress={onCancelReply} accessibilityRole="button">
           <Text size="xs" color={c.accent}>
@@ -164,16 +152,23 @@ function CommentForm({ fileId, requireEmail, replyTo, onCancelReply }: { fileId:
           {msg.text}
         </Text>
       ) : null}
-      <Button title="إرسال التعليق" loading={sending} disabled={!valid} onPress={send} />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !valid || sending, busy: sending }}
+        disabled={!valid || sending}
+        onPress={send}
+        style={({ pressed }) => [styles.submit, { backgroundColor: c.accent, opacity: !valid ? 0.5 : pressed || sending ? 0.8 : 1 }]}
+      >
+        <Text style={{ color: '#ffffff', fontSize: 15 }}>{sending ? 'جارٍ الإرسال…' : 'إرسال التعليق'}</Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  head: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  card: { padding: space[3], borderRadius: radius.md, borderWidth: 1, gap: space[1] },
-  cardHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+  card: { padding: 14, borderRadius: 5, borderWidth: 1, gap: 2 },
+  submit: { alignSelf: 'flex-start', minHeight: 44, paddingHorizontal: 22, borderRadius: 5, justifyContent: 'center' },
   reply: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingVertical: 4 },
   form: { gap: space[2], borderTopWidth: StyleSheet.hairlineWidth, paddingTop: space[3] },
-  input: { borderWidth: 1, borderRadius: radius.md, minHeight: 48, paddingHorizontal: space[3], fontSize: 16, fontFamily: 'Cairo_400Regular', textAlign: 'right' },
+  input: { borderWidth: 1, borderRadius: 0, minHeight: 48, paddingHorizontal: space[3], fontSize: 16, fontFamily: font.regular, textAlign: 'right' },
 });

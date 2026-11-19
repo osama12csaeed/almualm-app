@@ -6,7 +6,7 @@ import { CheckCircle2 } from 'lucide-react-native';
 import { sendReport, useFile } from '@/api/hooks';
 import { Screen } from '@/components/screen';
 import { Button, EmptyState, Text } from '@/components/ui';
-import { radius, space, useTheme } from '@/theme/theme';
+import { font, radius, space, useTheme } from '@/theme/theme';
 
 const QUICK = ['صفحة ناقصة', 'إجابة خاطئة', 'الملف لا يفتح', 'الملف لمادة أخرى'];
 
@@ -87,5 +87,5 @@ export default function Report() {
 }
 
 const styles = StyleSheet.create({
-  input: { minHeight: 140, borderWidth: 1, borderRadius: radius.md, padding: space[3], fontSize: 16, fontFamily: 'Cairo_400Regular', textAlignVertical: 'top', textAlign: 'right' },
+  input: { minHeight: 140, borderWidth: 1, borderRadius: radius.md, padding: space[3], fontSize: 16, fontFamily: font.regular, textAlignVertical: 'top', textAlign: 'right' },
 });

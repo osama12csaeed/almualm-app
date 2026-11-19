@@ -1,28 +1,27 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Linking, Pressable, ScrollView, Share, StyleSheet, View, useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Linking, Pressable, ScrollView, Share, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import { LinearGradient } from 'expo-linear-gradient';
 import Pdf from 'react-native-pdf';
-import {
-  Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, ChevronRight, CloudOff, Copy, Download, ExternalLink, FileText, Flag,
-  Link as LinkIcon, Maximize2, MessageCircle, Send, Share2,
-} from 'lucide-react-native';
+import { Bookmark, BookmarkCheck, CheckCircle2, CloudOff, ExternalLink } from 'lucide-react-native';
 import { useFile } from '@/api/hooks';
 import type { FileDetail, Pdf as PdfItem, ShareNetwork } from '@/api/types';
 import { Screen } from '@/components/screen';
-import { Badge, Button, EmptyState, ErrorState, FileRow, IconButton, Skeleton, Text } from '@/components/ui';
+import { Button, EmptyState, ErrorState, IconButton, Skeleton, Text } from '@/components/ui';
+import { Fa, SiteBox, SiteCardGrid, SiteHeading } from '@/components/site';
 import { Comments } from '@/components/Comments';
 import { AdBanner, useInterstitialOnOpen } from '@/ads/ads';
 import { actions, getState, useStore } from '@/store/store';
 import { getPdf, localFileFor, type DownloadHandle } from '@/store/pdfCache';
 import { openWith, saveToPhone } from '@/store/savePdf';
-import { ensureReadableBadge, formatBytes, htmlToBlocks, textOn } from '@/lib/core';
-import { radius, space, useTheme } from '@/theme/theme';
+import { formatBytes, htmlToBlocks } from '@/lib/core';
+import { font, space, useTheme } from '@/theme/theme';
 
 /**
- * The post page, laid out like the website:
- * breadcrumb → title → PDF viewer → «تحميل الملف» box → follow us → «ملفات اخرى» → share → comments.
- * Every part comes from the site through the plugin.
+ * The post page, built like almualm.com's (same order, colours, sizes and buttons):
+ * breadcrumb → title → PDF viewer (scroll + zoom, like PDF.js) → «تحميل الملف» → follow us →
+ * «ملفات اخرى» → «شارك المقالة» → post text → comments.
  */
 export default function FileScreen() {
   const id = Number(useLocalSearchParams<{ id: string }>().id);
@@ -32,7 +31,6 @@ export default function FileScreen() {
   const counted = useRef(false);
   const fav = useStore((s) => Boolean(s.favFiles[id]));
 
-  // Offline and never fetched? Fall back to the copy saved on the phone.
   const offlineCopy = useStore((s) => Object.values(s.downloads).find((d) => d.fileId === id));
   const detail: FileDetail | undefined =
     file.data ??
@@ -56,15 +54,13 @@ export default function FileScreen() {
     </IconButton>
   ) : null;
 
-  const headerTitle = detail?.breadcrumb?.length ? detail.breadcrumb[detail.breadcrumb.length - 1].title : (detail?.title ?? '');
-
   return (
-    <Screen title={headerTitle} back search actions={headerActions}>
+    <Screen title={detail?.title ?? ''} back search actions={headerActions}>
       {!detail && file.isLoading ? (
         <View style={{ padding: space[4], gap: space[3] }}>
-          <Skeleton height={20} style={{ width: 220 }} />
-          <Skeleton height={60} />
-          <Skeleton height={420} />
+          <Skeleton height={16} style={{ width: 240 }} />
+          <Skeleton height={56} />
+          <Skeleton height={520} />
         </View>
       ) : null}
       {!detail && file.isError ? <ErrorState message={file.error.message} onRetry={() => file.refetch()} /> : null}
@@ -76,28 +72,26 @@ export default function FileScreen() {
 
 function PostPage({ detail }: { detail: FileDetail }) {
   const { c } = useTheme();
+  const { width } = useWindowDimensions();
   const [pdfIndex, setPdfIndex] = useState(() => getState().progress[detail.id]?.pdfIndex ?? 0);
   const blocks = useMemo(() => htmlToBlocks(detail.html), [detail.html]);
   const pdf: PdfItem | undefined = detail.pdfs[Math.min(pdfIndex, detail.pdfs.length - 1)];
   const labels = detail.labels ?? { follow: 'للمزيد تابعنا في منصات التواصل الاجتماعي', related: 'ملفات اخرى', share: 'شارك المقالة', comments: 'التعليقات' };
   const [localUri, setLocalUri] = useState<string | null>(null);
+  // While a finger is on the PDF, the page stops scrolling so the PDF itself scrolls (like the site's PDF.js frame).
+  const [pageScroll, setPageScroll] = useState(true);
+  const lockPage = useCallback((locked: boolean) => setPageScroll(!locked), []);
+  const contentW = width - space[4] * 2;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: space[4], gap: space[5], paddingBottom: space[7] }} keyboardShouldPersistTaps="handled">
-      {/* 1. Breadcrumb */}
-      {detail.breadcrumb?.length ? <Breadcrumb crumbs={detail.breadcrumb} /> : null}
+    <ScrollView scrollEnabled={pageScroll} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+      {/* 1. Breadcrumb (one line, scrolls sideways like the site) */}
+      {detail.breadcrumb?.length ? <Breadcrumb crumbs={detail.breadcrumb} title={detail.title} /> : null}
 
-      {/* 2. Title */}
-      <View style={{ gap: space[2] }}>
-        <View style={{ flexDirection: 'row' }}>
-          <Badge name={detail.badge} color={detail.badge_color} />
-        </View>
-        <Text size="xl" weight="bold" accessibilityRole="header">
-          {detail.title}
-        </Text>
-      </View>
+      {/* 2. Title: h1.subheading */}
+      <SiteHeading title={detail.title} size={21} />
 
-      {/* 3. PDF viewer (one tab per PDF when the post has several) */}
+      {/* 3. PDF viewer */}
       {detail.pdfs.length > 1 ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space[2] }}>
           {detail.pdfs.map((p, i) => {
@@ -111,9 +105,9 @@ function PostPage({ detail }: { detail: FileDetail }) {
                   setLocalUri(null);
                   setPdfIndex(i);
                 }}
-                style={[styles.chip, { backgroundColor: active ? c.accent : c.surface, borderColor: active ? c.accent : c.border }]}
+                style={[styles.tab, { backgroundColor: active ? c.accent : c.surface, borderColor: active ? c.accent : c.border }]}
               >
-                <Text size="sm" weight="medium" color={active ? c.onAccent : c.text} numberOfLines={1}>
+                <Text size="sm" color={active ? '#ffffff' : c.text} numberOfLines={1}>
                   {p.name || `الملف ${i + 1}`}
                 </Text>
               </Pressable>
@@ -122,42 +116,38 @@ function PostPage({ detail }: { detail: FileDetail }) {
         </ScrollView>
       ) : null}
       {pdf ? (
-        <PdfEmbed key={pdf.url + (pdf.version ?? '')} detail={detail} pdf={pdf} pdfIndex={pdfIndex} onReady={setLocalUri} />
+        <PdfViewer key={pdf.url + (pdf.version ?? '')} detail={detail} pdf={pdf} pdfIndex={pdfIndex} onReady={setLocalUri} onLockPage={lockPage} />
       ) : (
         <View style={{ gap: space[3] }}>
-          {blocks.length ? <Blocks blocks={blocks} /> : <EmptyState icon={<FileText color={c.textMuted} size={40} />} title="لا يوجد ملف PDF في هذه الصفحة" />}
+          {blocks.length ? null : <EmptyState icon={<Fa name="file-pdf" size={40} color={c.textMuted} />} title="لا يوجد ملف PDF في هذه الصفحة" />}
           {detail.link ? <Button title="فتح على الموقع" variant="secondary" icon={<ExternalLink color={c.accent} size={18} />} onPress={() => Linking.openURL(detail.link)} /> : null}
         </View>
       )}
 
-      {/* 4. «تحميل الملف» */}
+      {/* 4. .file-download-container */}
       {pdf ? <DownloadBox detail={detail} pdf={pdf} localUri={localUri} /> : null}
 
-      {/* 5. Follow us */}
+      {/* 5. .sharer: follow us */}
       {detail.follow?.length ? (
-        <View style={{ gap: space[2] }}>
-          <Text weight="bold">{labels.follow}</Text>
-          <View style={styles.wrap}>
+        <SiteBox radius={8} style={styles.sharer}>
+          <Text style={[styles.sharerText, { color: c.text }]}>{labels.follow}</Text>
+          <View style={styles.sharerIcons}>
             {detail.follow.map((f) => (
-              <BrandPill key={f.url} network={f.network} onPress={() => Linking.openURL(f.url).catch(() => {})} />
+              <FollowIcon key={f.url} network={f.network} url={f.url} />
             ))}
           </View>
-        </View>
+        </SiteBox>
       ) : null}
 
       {/* 6. «ملفات اخرى» */}
       {detail.related?.length ? (
-        <View style={{ gap: space[3] }}>
-          <Text size="lg" weight="bold" accessibilityRole="header">
-            {labels.related}
-          </Text>
-          {detail.related.map((r) => (
-            <FileRow key={r.id} file={r} onPress={() => router.push({ pathname: '/file/[id]', params: { id: String(r.id) } })} />
-          ))}
+        <View style={{ gap: 20 }}>
+          <SiteHeading title={labels.related} />
+          <SiteCardGrid files={detail.related} width={contentW} onOpen={(rid) => router.push({ pathname: '/file/[id]', params: { id: String(rid) } })} />
         </View>
       ) : null}
 
-      {/* 7. Share */}
+      {/* 7. «شارك المقالة» */}
       {detail.link ? (
         <ShareSection
           title={labels.share}
@@ -167,7 +157,10 @@ function PostPage({ detail }: { detail: FileDetail }) {
         />
       ) : null}
 
-      {/* 8. Comments */}
+      {/* 8. Post text (the site shows it under the share box) */}
+      {blocks.length ? <PostText blocks={blocks} /> : null}
+
+      {/* 9. Comments */}
       {detail.comments ? <Comments fileId={detail.id} title={labels.comments} /> : null}
 
       <Pressable
@@ -175,7 +168,7 @@ function PostPage({ detail }: { detail: FileDetail }) {
         onPress={() => router.push({ pathname: '/report/[id]', params: { id: String(detail.id), page: String(getState().progress[detail.id]?.page ?? '') } })}
         style={styles.report}
       >
-        <Flag color={c.textMuted} size={16} />
+        <Fa name="flag" size={13} color={c.textMuted} />
         <Text size="sm" muted>
           الإبلاغ عن مشكلة في هذا الملف
         </Text>
@@ -184,44 +177,44 @@ function PostPage({ detail }: { detail: FileDetail }) {
   );
 }
 
-/* ---------------- 1. Breadcrumb ---------------- */
+/* ---------------- 1. Breadcrumb: الرئيسية » المنهج » الصف » المادة » العنوان ---------------- */
 
-function Breadcrumb({ crumbs }: { crumbs: NonNullable<FileDetail['breadcrumb']> }) {
+function Breadcrumb({ crumbs, title }: { crumbs: NonNullable<FileDetail['breadcrumb']>; title: string }) {
   const { c } = useTheme();
+  const link = { color: c.text, fontSize: 12, textDecorationLine: 'underline' as const };
   return (
-    <View style={styles.crumbs}>
-      <Pressable accessibilityRole="link" onPress={() => router.navigate('/')} hitSlop={6}>
-        <Text size="sm" color={c.accent}>
-          الرئيسية
-        </Text>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.crumbs}>
+      <Pressable accessibilityRole="link" onPress={() => router.navigate('/')} hitSlop={8}>
+        <Text style={link}>الرئيسية</Text>
       </Pressable>
       {crumbs.map((cr, i) => (
         <View key={i} style={styles.crumb}>
-          <ChevronLeft color={c.textMuted} size={14} />
+          <Text style={{ color: c.text, fontSize: 12 }}> » </Text>
           <Pressable
             accessibilityRole="link"
-            hitSlop={6}
+            hitSlop={8}
             onPress={() =>
               cr.type === 'node'
                 ? router.push({ pathname: '/node/[id]', params: { id: String(cr.id), title: cr.title } })
                 : Linking.openURL(cr.url).catch(() => {})
             }
           >
-            <Text size="sm" color={c.accent}>
-              {cr.title}
-            </Text>
+            <Text style={link}>{cr.title}</Text>
           </Pressable>
         </View>
       ))}
-    </View>
+      <Text style={{ color: c.text, fontSize: 12 }}> » {title}</Text>
+    </ScrollView>
   );
 }
 
-/* ---------------- 3. Embedded PDF viewer ---------------- */
+/* ---------------- 3. PDF viewer: scroll through pages and zoom, inside the page ---------------- */
 
-function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf: PdfItem; pdfIndex: number; onReady: (uri: string) => void }) {
+function PdfViewer({
+  detail, pdf, pdfIndex, onReady, onLockPage,
+}: { detail: FileDetail; pdf: PdfItem; pdfIndex: number; onReady: (uri: string) => void; onLockPage: (locked: boolean) => void }) {
   const { c, dark } = useTheme();
-  const { width, height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const saved = getState().progress[detail.id];
   const startPage = saved && saved.pdfIndex === pdfIndex ? saved.page : 1;
   const [uri, setUri] = useState<string | null>(null);
@@ -229,12 +222,14 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(startPage);
   const [total, setTotal] = useState(0);
+  const [scale, setScale] = useState(1);
+  const [goTo, setGoTo] = useState<number | undefined>(startPage > 1 ? startPage : undefined);
+  const [pageInput, setPageInput] = useState(String(startPage));
   const [attempt, setAttempt] = useState(0);
-  const [goTo, setGoTo] = useState(startPage);
   const handle = useRef<DownloadHandle | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Leaves room below so the page (download box, related files…) is always reachable.
-  const boxHeight = Math.min(height * 0.56, (width - space[4] * 2) * 1.42);
+  // The site's frame is 800px tall; on a phone keep a little of the page visible below it.
+  const frameHeight = Math.min(800, Math.round(height * 0.78));
 
   useEffect(() => {
     setError(null);
@@ -246,33 +241,69 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
         onReady(u);
       })
       .catch((e: Error) => {
-        if (e.message !== 'cancelled') setError('تعذّر تنزيل الملف. تحقق من الاتصال ثم أعد المحاولة.');
+        if (e.message !== 'cancelled') setError('تعذّر تحميل الملف. تحقق من الاتصال ثم أعد المحاولة.');
       });
     return () => handle.current?.cancel();
   }, [detail.id, detail.title, pdf.url, pdf.version, attempt, onReady]);
 
+  useEffect(() => () => onLockPage(false), [onLockPage]);
+
   const onPage = (p: number, n: number) => {
     setPage(p);
     setTotal(n);
+    setPageInput(String(p));
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => actions.saveProgress({ fileId: detail.id, title: detail.title, badge: detail.badge, pdfIndex, page: p, total: n }), 400);
   };
 
+  const jump = () => {
+    const n = Number(pageInput);
+    if (Number.isInteger(n) && n >= 1 && (!total || n <= total)) setGoTo(n);
+    else setPageInput(String(page));
+  };
+
   const openFull = () => router.push({ pathname: '/read/[id]', params: { id: String(detail.id), pdf: String(pdfIndex) } });
+  const toolColor = c.text;
 
   return (
-    <View style={[styles.viewer, { height: boxHeight, borderColor: c.border, backgroundColor: dark ? '#05080f' : c.surface }]}>
+    <View style={[styles.frame, { height: frameHeight, borderColor: dark ? c.border : '#cccccc' }]}>
+      {/* Toolbar, like PDF.js: page box, zoom, full screen */}
+      <View style={[styles.toolbar, { backgroundColor: dark ? c.surface : '#f9f9fa', borderBottomColor: dark ? c.border : '#dddddd' }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="ملء الشاشة" onPress={openFull} hitSlop={6} style={[styles.tool, styles.fullBtn]}>
+          <Fa name="expand" size={15} color={toolColor} />
+          <Text style={{ color: toolColor, fontSize: 12 }}>ملء الشاشة</Text>
+        </Pressable>
+        <View style={styles.zoom}>
+          <Pressable accessibilityRole="button" accessibilityLabel="تصغير" onPress={() => setScale((s) => Math.max(1, +(s - 0.25).toFixed(2)))} hitSlop={6} style={styles.tool}>
+            <Fa name="minus" size={15} color={scale > 1 ? toolColor : c.textMuted} />
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="تكبير" onPress={() => setScale((s) => Math.min(3, +(s + 0.25).toFixed(2)))} hitSlop={6} style={styles.tool}>
+            <Fa name="plus" size={15} color={toolColor} />
+          </Pressable>
+        </View>
+        <View style={{ flex: 1 }} />
+        <View style={styles.pageBox}>
+          <TextInput
+            value={pageInput}
+            onChangeText={setPageInput}
+            onSubmitEditing={jump}
+            onBlur={jump}
+            keyboardType="number-pad"
+            returnKeyType="go"
+            selectTextOnFocus
+            accessibilityLabel="رقم الصفحة"
+            style={[styles.pageInput, { color: c.text, borderColor: dark ? c.border : '#bbbbbb', backgroundColor: dark ? c.bg : '#ffffff' }]}
+          />
+          <Text style={{ color: c.text, fontSize: 13 }}>من {total || '…'}</Text>
+        </View>
+      </View>
+
       {error ? (
-        <EmptyState
-          icon={<CloudOff color={c.textMuted} size={40} />}
-          title="لم يكتمل التنزيل"
-          body={error}
-          action={<Button title="إعادة المحاولة" onPress={() => setAttempt((a) => a + 1)} />}
-        />
+        <EmptyState icon={<CloudOff color={c.textMuted} size={40} />} title="لم يكتمل التحميل" body={error} action={<Button title="إعادة المحاولة" onPress={() => setAttempt((a) => a + 1)} />} />
       ) : !uri ? (
         <View style={styles.center} accessibilityLiveRegion="polite">
-          <FileText color={c.accent} size={40} />
-          <Text weight="medium">جارٍ تحميل الملف…</Text>
+          <Fa name="file-pdf" size={38} color={c.accent} />
+          <Text>جارٍ تحميل الملف…</Text>
           <View style={[styles.track, { backgroundColor: c.border }]}>
             <View style={[styles.fill, { backgroundColor: c.accent, width: `${Math.round(progress * 100)}%` }]} />
           </View>
@@ -281,51 +312,29 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
           </Text>
         </View>
       ) : (
-        <>
-          {/* The preview never captures touches, so swiping on it scrolls the post page.
-              Arrows turn pages; a tap opens full-screen reading (zoom, scroll, jump to page). */}
-          <View style={{ flex: 1 }} pointerEvents="none">
+        <View
+          style={{ flex: 1 }}
+          onTouchStart={() => onLockPage(true)}
+          onTouchEnd={() => onLockPage(false)}
+          onTouchCancel={() => onLockPage(false)}
+        >
           <Pdf
             source={{ uri }}
             page={goTo}
-            horizontal
-            enablePaging
-            fitPolicy={0}
+            scale={scale}
             minScale={1}
             maxScale={4}
+            fitPolicy={0}
+            spacing={10}
             enableDoubleTapZoom
             enableAntialiasing
-            style={{ flex: 1, backgroundColor: 'transparent' }}
+            style={{ flex: 1, backgroundColor: dark ? '#05080f' : '#d4d4d7' }}
             onLoadComplete={(n) => setTotal(n)}
             onPageChanged={onPage}
+            onScaleChanged={(s) => setScale(s)}
             onError={() => setError('الملف تالف أو غير مكتمل. أعد تحميله.')}
           />
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="فتح الملف بملء الشاشة"
-            onPress={openFull}
-            style={[StyleSheet.absoluteFill, { bottom: 48 }]}
-          />
-          <View style={[styles.viewerBar, { backgroundColor: c.bg, borderTopColor: c.border }]}>
-            <IconButton label="الصفحة السابقة" onPress={() => setGoTo(Math.max(1, page - 1))}>
-              <ChevronRight color={page > 1 ? c.text : c.border} size={22} />
-            </IconButton>
-            <Text size="sm" weight="medium">
-              {page} / {total || '…'}
-            </Text>
-            <IconButton label="الصفحة التالية" onPress={() => setGoTo(total ? Math.min(total, page + 1) : page + 1)}>
-              <ChevronLeft color={!total || page < total ? c.text : c.border} size={22} />
-            </IconButton>
-            <View style={{ flex: 1 }} />
-            <Pressable accessibilityRole="button" onPress={openFull} style={styles.fullBtn} hitSlop={6}>
-              <Maximize2 color={c.accent} size={18} />
-              <Text size="sm" weight="medium" color={c.accent}>
-                ملء الشاشة
-              </Text>
-            </Pressable>
-          </View>
-        </>
+        </View>
       )}
     </View>
   );
@@ -334,86 +343,88 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
 /* ---------------- 4. «تحميل الملف» ---------------- */
 
 function DownloadBox({ detail, pdf, localUri }: { detail: FileDetail; pdf: PdfItem; localUri: string | null }) {
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'shared'>('idle');
   const { key } = localFileFor(detail.id, pdf.url, pdf.version);
   const texts = detail.download ?? { title: 'تحميل الملف', button: 'تحميل PDF' };
 
   const save = async () => {
-    if (!localUri) return;
+    if (!localUri || state === 'saving') return;
     setState('saving');
-    actions.setPinned(key, true); // keep it in the app too
+    actions.setPinned(key, true);
     const r = await saveToPhone(localUri, pdf.name || detail.title).catch(() => 'cancelled' as const);
     setState(r === 'cancelled' ? 'idle' : r);
   };
 
   return (
-    <View style={[styles.download, { backgroundColor: c.surface, borderColor: c.border }]}>
-      <Text size="lg" weight="bold" center>
-        {texts.title}
-      </Text>
-      <Button
-        title={localUri ? `${texts.button}${pdf.size ? ` (${formatBytes(pdf.size)})` : ''}` : 'جارٍ تجهيز الملف…'}
-        icon={<Download color={c.onAccent} size={20} />}
-        loading={state === 'saving'}
-        disabled={!localUri}
+    <SiteBox style={{ alignItems: 'center', gap: 12 }}>
+      <Text style={{ fontFamily: font.medium, fontSize: 16, color: dark ? c.text : '#2c3e50' }}>{texts.title}</Text>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={texts.button}
+        accessibilityState={{ disabled: !localUri, busy: state === 'saving' }}
         onPress={save}
-      />
+        style={({ pressed }) => [{ alignItems: 'center', gap: 6, opacity: !localUri ? 0.55 : pressed ? 0.85 : 1 }]}
+      >
+        <LinearGradient colors={['#e74c3c', '#c0392b']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.pdfBtn}>
+          <Fa name={state === 'saved' ? 'check' : 'file-pdf'} size={24} color="#ffffff" />
+        </LinearGradient>
+        <Text style={{ fontFamily: font.medium, fontSize: 11, color: dark ? c.textMuted : '#34495e' }}>
+          {localUri ? texts.button : 'جارٍ التجهيز…'}
+          {localUri && pdf.size ? ` (${formatBytes(pdf.size)})` : ''}
+        </Text>
+      </Pressable>
       {state === 'saved' ? (
         <View style={styles.savedRow}>
-          <CheckCircle2 color={c.success} size={18} />
-          <Text size="sm" color={c.success} style={{ flex: 1 }}>
-            تم حفظ الملف في هاتفك، ويبقى متاحاً هنا بدون إنترنت.
+          <CheckCircle2 color={c.success} size={16} />
+          <Text size="xs" color={c.success}>
+            تم حفظ الملف في هاتفك
           </Text>
         </View>
       ) : null}
       {localUri ? (
-        <Pressable accessibilityRole="button" onPress={() => openWith(localUri, detail.title)} style={styles.openWith} hitSlop={6}>
-          <ExternalLink color={c.accent} size={16} />
-          <Text size="sm" color={c.accent}>
-            فتح بتطبيق آخر أو حفظ في Drive
+        <Pressable accessibilityRole="button" onPress={() => openWith(localUri, detail.title)} hitSlop={6}>
+          <Text size="xs" style={{ color: c.heading, textDecorationLine: 'underline' }}>
+            فتح بتطبيق آخر
           </Text>
         </Pressable>
       ) : null}
-    </View>
+    </SiteBox>
   );
 }
 
-/* ---------------- 5 & 7. Social ---------------- */
+/* ---------------- 5. Follow icons (.sharer-list) ---------------- */
 
-const BRAND: Record<string, { label: string; color: string }> = {
-  facebook: { label: 'فيسبوك', color: '#1877f2' },
-  twitter: { label: 'تويتر', color: '#0f1419' },
-  whatsapp: { label: 'واتساب', color: '#128c7e' },
-  telegram: { label: 'تيليجرام', color: '#229ed9' },
-  linkedin: { label: 'لينكد إن', color: '#0a66c2' },
-  youtube: { label: 'يوتيوب', color: '#ff0000' },
-  instagram: { label: 'إنستغرام', color: '#c13584' },
-  tiktok: { label: 'تيك توك', color: '#111111' },
-  copy: { label: 'نسخ الرابط', color: '#475569' },
-  link: { label: 'رابط', color: '#475569' },
+const FOLLOW: Record<string, { icon: string; bg: string }> = {
+  whatsapp: { icon: 'whatsapp', bg: '#4dd060' },
+  telegram: { icon: 'telegram', bg: '#3da5f1' },
+  facebook: { icon: 'facebook-f', bg: '#1877f2' },
+  twitter: { icon: 'x-twitter', bg: '#111111' },
+  youtube: { icon: 'youtube', bg: '#ff0000' },
+  instagram: { icon: 'instagram', bg: '#c13584' },
+  tiktok: { icon: 'tiktok', bg: '#111111' },
+  linkedin: { icon: 'linkedin-in', bg: '#0077b5' },
 };
 
-function BrandPill({ network, onPress, done }: { network: string; onPress: () => void; done?: boolean }) {
-  const b = BRAND[network] ?? BRAND.link;
-  const bg = ensureReadableBadge(b.color, '#475569');
-  const fg = textOn(bg);
-  const Icon =
-    network === 'copy' ? (done ? CheckCircle2 : Copy) : network === 'telegram' ? Send : network === 'whatsapp' ? MessageCircle : network === 'link' ? LinkIcon : Share2;
+function FollowIcon({ network, url }: { network: string; url: string }) {
+  const f = FOLLOW[network];
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={b.label}
-      onPress={onPress}
-      style={({ pressed }) => [styles.pill, { backgroundColor: bg, opacity: pressed ? 0.85 : 1 }]}
-    >
-      <Icon color={fg} size={16} />
-      <Text size="sm" weight="medium" color={fg}>
-        {done ? 'تم النسخ' : b.label}
-      </Text>
+    <Pressable accessibilityRole="link" accessibilityLabel={network} onPress={() => Linking.openURL(url).catch(() => {})} hitSlop={6} style={[styles.followIcon, { backgroundColor: f?.bg ?? '#6c757d' }]}>
+      {f ? <Fa name={f.icon} brand size={16} color="#ffffff" /> : <Fa name="link" size={14} color="#ffffff" />}
     </Pressable>
   );
 }
+
+/* ---------------- 7. «شارك المقالة» ---------------- */
+
+const SHARE: Record<ShareNetwork, { label: string; bg: string; icon: string; brand: boolean }> = {
+  facebook: { label: 'فيسبوك', bg: '#1877f2', icon: 'facebook-f', brand: true },
+  twitter: { label: 'تويتر', bg: '#1da1f2', icon: 'twitter', brand: true },
+  whatsapp: { label: 'واتساب', bg: '#25d366', icon: 'whatsapp', brand: true },
+  telegram: { label: 'تيليجرام', bg: '#0088cc', icon: 'telegram', brand: true },
+  linkedin: { label: 'لينكد إن', bg: '#0077b5', icon: 'linkedin-in', brand: true },
+  copy: { label: 'نسخ الرابط', bg: '#6c757d', icon: 'copy', brand: false },
+};
 
 function shareUrl(network: ShareNetwork, link: string, title: string): string | null {
   const u = encodeURIComponent(link);
@@ -435,60 +446,60 @@ function shareUrl(network: ShareNetwork, link: string, title: string): string | 
 }
 
 function ShareSection({ title, link, postTitle, networks }: { title: string; link: string; postTitle: string; networks: ShareNetwork[] }) {
-  const { c } = useTheme();
+  const { c, dark } = useTheme();
+  const { width } = useWindowDimensions();
   const [copied, setCopied] = useState(false);
+  const btnW = (width - space[4] * 2 - 30 - 10) / 2;
   return (
-    <View style={{ gap: space[2] }}>
-      <Text weight="bold">{title}</Text>
-      <View style={styles.wrap}>
-        {networks.map((n) => (
-          <BrandPill
-            key={n}
-            network={n}
-            done={n === 'copy' && copied}
-            onPress={async () => {
-              if (n === 'copy') {
-                await Clipboard.setStringAsync(link);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-                return;
-              }
-              const url = shareUrl(n, link, postTitle);
-              if (url) Linking.openURL(url).catch(() => Share.share({ message: `${postTitle}\n${link}` }));
-            }}
-          />
-        ))}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="مشاركة"
-          onPress={() => Share.share({ message: `${postTitle}\n${link}` })}
-          style={[styles.pill, { backgroundColor: c.surface, borderWidth: 1, borderColor: c.border }]}
-        >
-          <Share2 color={c.text} size={16} />
-          <Text size="sm" weight="medium">
-            المزيد
-          </Text>
-        </Pressable>
+    <View style={[styles.shareBox, { borderColor: dark ? c.border : '#dddddd', backgroundColor: c.bg }]}>
+      <Text center style={{ color: c.text, fontSize: 20, lineHeight: 30, marginBottom: 14 }}>
+        {title}
+      </Text>
+      <View style={styles.shareGrid}>
+        {networks.map((n) => {
+          const s = SHARE[n];
+          if (!s) return null;
+          const done = n === 'copy' && copied;
+          return (
+            <Pressable
+              key={n}
+              accessibilityRole="button"
+              accessibilityLabel={s.label}
+              onPress={async () => {
+                if (n === 'copy') {
+                  await Clipboard.setStringAsync(link);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                  return;
+                }
+                const url = shareUrl(n, link, postTitle);
+                if (url) Linking.openURL(url).catch(() => Share.share({ message: `${postTitle}\n${link}` }));
+              }}
+              style={({ pressed }) => [styles.shareBtn, { width: btnW, backgroundColor: s.bg, opacity: pressed ? 0.85 : 1 }]}
+            >
+              <Fa name={done ? 'check' : s.icon} brand={!done && s.brand} size={14} color="#ffffff" />
+              <Text style={{ color: '#ffffff', fontSize: 12, fontFamily: font.medium }}>{done ? 'تم النسخ' : s.label}</Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
 }
 
-/* ---------------- Text (posts without a PDF) ---------------- */
+/* ---------------- 8. Post text ---------------- */
 
-function Blocks({ blocks }: { blocks: ReturnType<typeof htmlToBlocks> }) {
+function PostText({ blocks }: { blocks: ReturnType<typeof htmlToBlocks> }) {
   const { c } = useTheme();
   return (
-    <View style={{ gap: space[3] }}>
+    <View style={{ gap: 6 }}>
       {blocks.map((b, i) =>
         b.href ? (
           <Pressable key={i} accessibilityRole="link" onPress={() => Linking.openURL(b.href!)}>
-            <Text color={c.accent} style={{ textDecorationLine: 'underline' }}>
-              {b.text}
-            </Text>
+            <Text style={{ color: c.heading, fontSize: 15, lineHeight: 28, textDecorationLine: 'underline' }}>{b.text}</Text>
           </Pressable>
         ) : (
-          <Text key={i} size={b.type === 'h' ? 'lg' : 'base'} weight={b.type === 'h' ? 'bold' : 'regular'}>
+          <Text key={i} style={{ color: c.text, fontSize: b.type === 'h' ? 17 : 15, lineHeight: b.type === 'h' ? 30 : 28, fontFamily: b.type === 'h' ? font.medium : font.regular }}>
             {b.type === 'li' ? `• ${b.text}` : b.text}
           </Text>
         ),
@@ -498,19 +509,28 @@ function Blocks({ blocks }: { blocks: ReturnType<typeof htmlToBlocks> }) {
 }
 
 const styles = StyleSheet.create({
-  crumbs: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 2 },
-  crumb: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  chip: { paddingHorizontal: space[4], minHeight: 40, maxWidth: 240, justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1 },
-  viewer: { borderWidth: 1, borderRadius: radius.lg, overflow: 'hidden' },
-  viewerBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[1], minHeight: 44, borderTopWidth: StyleSheet.hairlineWidth },
-  fullBtn: { flexDirection: 'row', alignItems: 'center', gap: space[1], minHeight: 44 },
+  page: { paddingHorizontal: space[4], paddingTop: space[3], paddingBottom: space[7], gap: 22 },
+  crumbs: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4 },
+  crumb: { flexDirection: 'row', alignItems: 'center' },
+  tab: { paddingHorizontal: space[4], minHeight: 38, maxWidth: 240, justifyContent: 'center', borderRadius: 8, borderWidth: 1 },
+  frame: { borderWidth: 1.4, borderRadius: 8, overflow: 'hidden' },
+  toolbar: { flexDirection: 'row', alignItems: 'center', minHeight: 46, paddingHorizontal: 6, borderBottomWidth: 1 },
+  tool: { minWidth: 40, minHeight: 40, alignItems: 'center', justifyContent: 'center' },
+  fullBtn: { flexDirection: 'row', gap: 6, paddingHorizontal: 6 },
+  zoom: { flexDirection: 'row', alignItems: 'center' },
+  pageBox: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingEnd: 4 },
+  pageInput: { width: 54, height: 34, borderWidth: 1, borderRadius: 4, textAlign: 'center', fontSize: 15, paddingVertical: 0, fontFamily: font.regular },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[3], padding: space[5] },
   track: { height: 8, width: '80%', borderRadius: 4, overflow: 'hidden' },
   fill: { height: 8, borderRadius: 4 },
-  download: { borderWidth: 1, borderRadius: radius.lg, padding: space[4], gap: space[3] },
-  savedRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  openWith: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[1], minHeight: 40 },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-  pill: { flexDirection: 'row', alignItems: 'center', gap: space[1], paddingHorizontal: space[3], minHeight: 40, borderRadius: radius.pill },
+  pdfBtn: { width: 52, height: 52, borderRadius: 9, alignItems: 'center', justifyContent: 'center', elevation: 3, shadowColor: '#000', shadowOpacity: 0.15, shadowOffset: { width: 0, height: 2 }, shadowRadius: 6 },
+  savedRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  sharer: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12 },
+  sharerText: { flex: 1, fontSize: 15, lineHeight: 24, fontFamily: font.medium },
+  sharerIcons: { flexDirection: 'row', gap: 8 },
+  followIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  shareBox: { borderWidth: 1, borderRadius: 10, padding: 15 },
+  shareGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
+  shareBtn: { height: 40, borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   report: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[2], minHeight: 44 },
 });
