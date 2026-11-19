@@ -22,15 +22,16 @@ export function setContentVersion(v: number) {
 }
 
 export async function api<T>(path: string, init: RequestInit & { timeoutMs?: number; params?: Record<string, string | number | undefined> } = {}): Promise<T> {
-  const url = new URL(API_BASE + path);
-  for (const [k, v] of Object.entries(init.params ?? {})) {
-    if (v !== undefined && v !== '') url.searchParams.set(k, String(v));
-  }
-  if (contentVersion && !path.startsWith('/config')) url.searchParams.set('v', String(contentVersion));
+  // Plain string building: no dependence on URL/URLSearchParams polyfills.
+  const query = Object.entries({ ...(init.params ?? {}), ...(contentVersion && !path.startsWith('/config') ? { v: contentVersion } : {}) })
+    .filter(([, v]) => v !== undefined && String(v) !== '')
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+    .join('&');
+  const url = API_BASE + path + (query ? (path.includes('?') ? '&' : '?') + query : '');
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), init.timeoutMs ?? 20000);
   try {
-    const res = await fetch(url.toString(), {
+    const res = await fetch(url, {
       ...init,
       signal: controller.signal,
       headers: { Accept: 'application/json', ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...(init.headers ?? {}) },

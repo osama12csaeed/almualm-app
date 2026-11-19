@@ -52,7 +52,28 @@ const config: ExpoConfig = {
     'expo-sharing',
     ['expo-localization', { supportsRTL: true, forcesRTL: true }],
     'expo-image',
-    ['expo-build-properties', { android: { usesCleartextTraffic: false } }],
+    [
+      'expo-build-properties',
+      {
+        android: {
+          usesCleartextTraffic: false,
+          // SDK 58 turns on R8 by default; it stripped WorkManager's Room database (used by
+          // Google Mobile Ads / Firebase) and the release app crashed on launch. Off for v1.
+          enableMinifyInReleaseBuilds: false,
+          enableShrinkResourcesInReleaseBuilds: false,
+          // Kept for when minification is switched back on.
+          extraProguardRules: [
+            '-keep class * extends androidx.room.RoomDatabase { <init>(); }',
+            '-keep class androidx.work.** { *; }',
+            '-keep class org.wonday.pdf.** { *; }',
+            '-keep class com.github.barteksc.** { *; }',
+            '-keep class io.legere.pdfiumandroid.** { *; }',
+            '-keep class com.ReactNativeBlobUtil.** { *; }',
+            '-keep class com.google.android.gms.ads.** { *; }',
+          ].join('\n'),
+        },
+      },
+    ],
     [
       'react-native-google-mobile-ads',
       { androidAppId: ADMOB_ANDROID_APP_ID, delayAppMeasurementInit: true },
