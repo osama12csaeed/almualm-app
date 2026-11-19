@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { QueryClient, useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api, setContentVersion } from './client';
-import type { AppConfig, FileDetail, FileSummary, NodeDetail, NodeFiles, Notice, TreeNode } from './types';
+import type { AppConfig, CommentsResponse, FileDetail, FileSummary, NodeDetail, NodeFiles, Notice, TreeNode } from './types';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -27,6 +27,7 @@ export const keys = {
   latest: (root: number) => ['latest', root] as const,
   search: (q: string, root: number) => ['search', root, q] as const,
   notices: ['notices'] as const,
+  comments: (id: number) => ['comments', id] as const,
 };
 
 /**
@@ -93,6 +94,16 @@ export const useSearch = (q: string, root: number) =>
 
 export const useNotices = () =>
   useQuery({ queryKey: keys.notices, queryFn: () => api<Notice[]>('/notices'), staleTime: 60 * 1000 });
+
+export const useComments = (id: number, enabled = true) =>
+  useQuery({ queryKey: keys.comments(id), queryFn: () => api<CommentsResponse>(`/files/${id}/comments`), staleTime: 60 * 1000, enabled });
+
+export function postComment(id: number, body: { author: string; email: string; content: string; parent?: number }) {
+  return api<{ ok: boolean; status: 'approved' | 'hold'; comment: import('./types').Comment | null }>(`/files/${id}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({ ...body, website: '' }),
+  });
+}
 
 export function sendReport(body: { file_id: number; page?: number; message: string; app_version: string }) {
   return api<{ ok: boolean }>('/reports', { method: 'POST', body: JSON.stringify({ ...body, website: '' }) });

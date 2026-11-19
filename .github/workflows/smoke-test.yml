@@ -48,6 +48,19 @@ jobs:
             adb exec-out screencap -p > smoke/screen.png || true
             adb logcat -d > smoke/logcat-full.txt || true
             grep -E "AndroidRuntime|FATAL|ReactNativeJS|ReactNative|unknown:|Expo|almualm|SoLoader|Exception|Error:" smoke/logcat-full.txt | tail -400 > smoke/logcat.txt || true
+            # Open a real post from the site by deep link and capture the post screen.
+            adb shell am start -W -a android.intent.action.VIEW -d "almualm://file/18251" com.almualm.app || true
+            sleep 35
+            adb exec-out screencap -p > smoke/post-top.png || true
+            adb shell input swipe 540 1700 540 500 600 || true
+            sleep 3
+            adb exec-out screencap -p > smoke/post-middle.png || true
+            adb shell input swipe 540 1700 540 300 600 || true
+            adb shell input swipe 540 1700 540 300 600 || true
+            sleep 3
+            adb exec-out screencap -p > smoke/post-bottom.png || true
+            (adb shell pidof com.almualm.app && echo "POST SCREEN: RUNNING" || echo "POST SCREEN: CRASHED") | tee -a smoke/result.txt
+            adb logcat -d > smoke/logcat-full.txt || true
             cat smoke/result.txt
             echo "----- crash log -----"
             grep -E -A40 "FATAL EXCEPTION|ReactNativeJS.*(Error|Invariant)|Fatal signal" smoke/logcat-full.txt | head -150 || true

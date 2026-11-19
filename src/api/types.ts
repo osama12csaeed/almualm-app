@@ -30,7 +30,28 @@ export type FileSummary = {
 /** `version` changes whenever the file is replaced on the site (even under the same name). */
 export type Pdf = { url: string; name: string; size: number | null; version?: string };
 
-export type FileDetail = FileSummary & { pdfs: Pdf[]; html: string; link: string };
+export type Crumb2 = { type: 'node'; id: number; title: string } | { type: 'link'; url: string; title: string };
+
+export type ShareNetwork = 'facebook' | 'twitter' | 'whatsapp' | 'telegram' | 'linkedin' | 'copy';
+
+/** One post page, as the website shows it. */
+export type FileDetail = FileSummary & {
+  pdfs: Pdf[];
+  html: string;
+  link: string;
+  source?: 'site' | 'fallback';
+  breadcrumb?: Crumb2[];
+  download?: { title: string; button: string };
+  follow?: { network: string; url: string }[];
+  related?: FileSummary[];
+  labels?: { follow: string; related: string; share: string; comments: string };
+  share?: ShareNetwork[];
+  comments?: { open: boolean; count: number };
+};
+
+export type Comment = { id: number; parent: number; author: string; date: string | null; content: string; by_site: boolean };
+
+export type CommentsResponse = { open: boolean; require_name_email: boolean; moderated: boolean; count: number; comments: Comment[] };
 
 export type NodeFiles = { node: { id: number; title: string; path: Crumb[] }; files: FileSummary[] };
 

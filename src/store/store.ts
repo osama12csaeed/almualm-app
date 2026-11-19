@@ -19,6 +19,9 @@ export type State = {
     notifications: boolean;
     cacheCapMB: number;
     fitWidth: boolean;
+    saveDirUri: string | null; // folder the student picked for «تحميل PDF»
+    commentName: string;
+    commentEmail: string;
   };
   favFiles: Record<string, SavedFile>;
   favNodes: Record<string, SavedNode>;
@@ -32,7 +35,7 @@ const KEY = 'almualm-store-v1';
 
 const initial: State = {
   hydrated: false,
-  settings: { theme: null, rootId: null, gradeId: null, notifications: true, cacheCapMB: 400, fitWidth: true },
+  settings: { theme: null, rootId: null, gradeId: null, notifications: true, cacheCapMB: 400, fitWidth: true, saveDirUri: null, commentName: '', commentEmail: '' },
   favFiles: {},
   favNodes: {},
   progress: {},
