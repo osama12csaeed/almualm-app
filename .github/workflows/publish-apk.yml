@@ -1,0 +1,43 @@
+name: Publish APK to the apk branch
+
+# After every successful build (or by hand with a run id), the APK is committed
+# to the "apk" branch so it can be fetched with plain git:
+#   https://github.com/<owner>/<repo>/raw/apk/almualm-app.apk
+on:
+  workflow_run:
+    workflows: ["Build Android APK"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Build run id"
+        required: true
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: almualm-app-apk
+          run-id: ${{ github.event.inputs.run_id || github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: out
+
+      - name: Commit the APK to the apk branch
+        env:
+          RUN: ${{ github.event.inputs.run_id || github.event.workflow_run.id }}
+        run: |
+          mkdir pub && cd pub
+          git init -q -b apk
+          cp ../out/app-release.apk almualm-app.apk
+          sha256sum almualm-app.apk > almualm-app.apk.sha256
+          echo "Built by run $RUN on $(date -u +%F)" > BUILD.txt
+          git add -A
+          git -c user.name="github-actions" -c user.email="actions@github.com" commit -qm "APK from run $RUN"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" apk
