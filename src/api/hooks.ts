@@ -55,12 +55,13 @@ export function useConfig() {
     seen.current = version;
   }, [version, qc]);
 
+  const { refetch } = query;
   useEffect(() => {
     const sub = AppState.addEventListener('change', (s) => {
-      if (s === 'active') query.refetch();
+      if (s === 'active') refetch();
     });
     return () => sub.remove();
-  }, [query]);
+  }, [refetch]);
 
   return query;
 }

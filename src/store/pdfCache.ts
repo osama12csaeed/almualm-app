@@ -35,6 +35,13 @@ export function safeUrl(url: string): string {
 
 export type DownloadHandle = { promise: Promise<string>; cancel: () => void };
 
+/**
+ * One download per file at a time. The post page and the full-screen reader can ask for the same
+ * PDF together: they share the download, and it is only cancelled when nobody is waiting for it.
+ */
+type Flight = { promise: Promise<string>; task: { cancel: () => void }; users: number; listeners: Set<(f: number) => void>; cancelled: boolean };
+const inFlight = new Map<string, Flight>();
+
 /** Returns a local file:// URI for the PDF, downloading it first if needed. */
 export function getPdf(fileId: number, title: string, url: string, version = '', onProgress?: (fraction: number) => void): DownloadHandle {
   ensureDir();
@@ -47,48 +54,74 @@ export function getPdf(fileId: number, title: string, url: string, version = '',
     return { promise: Promise.resolve(file.uri), cancel: () => {} };
   }
 
-  // A file without a store entry is a leftover from an interrupted download.
-  if (file.exists) file.delete();
-  const task = File.createDownloadTask(safeUrl(url), file, {
-    onProgress: ({ bytesWritten, totalBytes }) => {
-      if (onProgress && totalBytes > 0) onProgress(Math.min(1, bytesWritten / totalBytes));
-    },
-  });
-  let cancelled = false;
-  const promise = (async () => {
-    let out: File | null = null;
-    try {
-      out = await task.downloadAsync();
-    } catch (e) {
-      if (file.exists) file.delete();
-      throw e;
-    }
-    if (cancelled || !out || !file.exists || file.size === 0) {
-      if (file.exists) file.delete();
-      throw new Error('cancelled');
-    }
-    const pinned = existing?.pinned ?? older.some((d) => d.pinned);
-    const entry: Download = { key, fileId, title, url, version, uri: file.uri, size: file.size, pinned, lastOpened: Date.now() };
-    actions.upsertDownload(entry);
-    if (older.length) removeLocal(older.map((d) => d.key));
-    prune();
-    return file.uri;
-  })();
-  return {
-    promise,
-    cancel: () => {
-      cancelled = true;
+  let flight = inFlight.get(key);
+  if (!flight) {
+    // A file without a store entry is a leftover from an interrupted download.
+    if (file.exists) file.delete();
+    const listeners = new Set<(f: number) => void>();
+    const task = File.createDownloadTask(safeUrl(url), file, {
+      onProgress: ({ bytesWritten, totalBytes }) => {
+        if (totalBytes > 0) listeners.forEach((l) => l(Math.min(1, bytesWritten / totalBytes)));
+      },
+    });
+    const f: Flight = { promise: Promise.resolve(''), task, users: 0, listeners, cancelled: false };
+    f.promise = (async () => {
       try {
-        task.cancel();
-      } catch {}
+        let out: File | null = null;
+        try {
+          out = await task.downloadAsync();
+        } catch (e) {
+          if (file.exists) file.delete();
+          throw f.cancelled ? new Error('cancelled') : e;
+        }
+        if (f.cancelled || !out || !file.exists || file.size === 0) {
+          if (file.exists) file.delete();
+          throw new Error(f.cancelled ? 'cancelled' : 'empty');
+        }
+        const pinned = existing?.pinned ?? older.some((d) => d.pinned);
+        const entry: Download = { key, fileId, title, url, version, uri: file.uri, size: file.size, pinned, lastOpened: Date.now() };
+        actions.upsertDownload(entry);
+        if (older.length) removeLocal(older.map((d) => d.key));
+        prune([key]);
+        return file.uri;
+      } finally {
+        inFlight.delete(key);
+      }
+    })();
+    inFlight.set(key, f);
+    flight = f;
+  }
+
+  const current = flight;
+  current.users++;
+  if (onProgress) current.listeners.add(onProgress);
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    current.users--;
+    if (onProgress) current.listeners.delete(onProgress);
+  };
+  return {
+    promise: current.promise.finally(release),
+    cancel: () => {
+      if (released) return;
+      release();
+      if (current.users <= 0 && !current.cancelled) {
+        current.cancelled = true;
+        try {
+          current.task.cancel();
+        } catch {}
+      }
     },
   };
 }
 
-export function prune() {
+/** Frees space above the size cap, oldest first. `keep`: files in use right now (never removed). */
+export function prune(keep: string[] = []) {
   const { downloads, settings } = getState();
   const victims = pruneList(
-    Object.values(downloads).map((d) => ({ key: d.key, size: d.size, lastOpened: d.lastOpened, pinned: d.pinned })),
+    Object.values(downloads).map((d) => ({ key: d.key, size: d.size, lastOpened: d.lastOpened, pinned: d.pinned || keep.includes(d.key) })),
     settings.cacheCapMB * 1024 * 1024,
   );
   removeLocal(victims);

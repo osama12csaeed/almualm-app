@@ -33,14 +33,15 @@ if (!I18nManager.isRTL) {
 const persister = createAsyncStoragePersister({ storage: AsyncStorage, key: 'almualm-query-cache' });
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
+  // If the fonts can't load, carry on with the system font rather than staying on the splash screen.
+  const [fontsLoaded, fontError] = useFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
   const hydrated = useStore((s) => s.hydrated);
 
   useEffect(() => {
     hydrate().then(reconcile);
   }, []);
 
-  if (!fontsLoaded || !hydrated) return null;
+  if ((!fontsLoaded && !fontError) || !hydrated) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -66,6 +67,11 @@ function Shell() {
     // Show the app as soon as we have either fresh or cached config, or after a failed first fetch.
     if (config.data || config.isError) SplashScreen.hideAsync().catch(() => {});
   }, [config.data, config.isError]);
+  useEffect(() => {
+    // Slow first launch: don't keep the splash up while the site is still answering.
+    const t = setTimeout(() => SplashScreen.hideAsync().catch(() => {}), 6000);
+    return () => clearTimeout(t);
+  }, []);
 
   // Pick the curriculum automatically when there is only one (Sudan first).
   const curricula = config.data?.home.curricula ?? [];

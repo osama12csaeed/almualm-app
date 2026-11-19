@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
-import Pdf from 'react-native-pdf';
+import Pdf, { type PdfRef } from 'react-native-pdf';
 import { CloudDownload, CloudOff, Flag, Hash, Pin, PinOff, Type } from 'lucide-react-native';
 import type { FileDetail, Pdf as PdfItem } from '@/api/types';
 import { Button, EmptyState, IconButton, Text } from '@/components/ui';
@@ -20,7 +20,7 @@ export function PdfReader({ detail, pdf, pdfIndex, onToggleText }: { detail: Fil
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(startPage);
   const [total, setTotal] = useState(saved?.total ?? 0);
-  const [jumpTo, setJumpTo] = useState<number | undefined>(startPage > 1 ? startPage : undefined);
+  const pdfRef = useRef<PdfRef>(null);
   const [askPage, setAskPage] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const fitWidth = useStore((s) => s.settings.fitWidth);
@@ -80,8 +80,9 @@ export function PdfReader({ detail, pdf, pdfIndex, onToggleText }: { detail: Fil
   return (
     <View style={{ flex: 1 }}>
       <Pdf
+        ref={pdfRef}
         source={{ uri }}
-        page={jumpTo}
+        page={startPage}
         fitPolicy={fitWidth ? 0 : 2}
         minScale={1}
         maxScale={5}
@@ -122,7 +123,7 @@ export function PdfReader({ detail, pdf, pdfIndex, onToggleText }: { detail: Fil
         total={total}
         onClose={() => setAskPage(false)}
         onGo={(p) => {
-          setJumpTo(p);
+          pdfRef.current?.setPage(p);
           setAskPage(false);
         }}
       />

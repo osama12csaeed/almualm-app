@@ -3,7 +3,7 @@ import { Linking, Pressable, ScrollView, Share, StyleSheet, TextInput, View, use
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { LinearGradient } from 'expo-linear-gradient';
-import Pdf from 'react-native-pdf';
+import Pdf, { type PdfRef } from 'react-native-pdf';
 import { Bookmark, BookmarkCheck, CheckCircle2, CloudOff, ExternalLink } from 'lucide-react-native';
 import { useFile } from '@/api/hooks';
 import type { FileDetail, Pdf as PdfItem, ShareNetwork } from '@/api/types';
@@ -32,14 +32,18 @@ export default function FileScreen() {
   const fav = useStore((s) => Boolean(s.favFiles[id]));
 
   const offlineCopy = useStore((s) => Object.values(s.downloads).find((d) => d.fileId === id));
-  const detail: FileDetail | undefined =
-    file.data ??
-    (offlineCopy
-      ? {
-          id, title: offlineCopy.title, badge: 'ملف', badge_color: null, thumb: null, modified: null, date: null, html: '', link: '',
-          pdfs: [{ url: offlineCopy.url, name: offlineCopy.title, size: offlineCopy.size, version: offlineCopy.version }],
-        }
-      : undefined);
+  // No connection and nothing cached: show the copy already on the phone.
+  const offlineDetail = useMemo<FileDetail | undefined>(
+    () =>
+      offlineCopy
+        ? {
+            id, title: offlineCopy.title, badge: 'ملف', badge_color: null, thumb: null, modified: null, date: null, html: '', link: '',
+            pdfs: [{ url: offlineCopy.url, name: offlineCopy.title, size: offlineCopy.size, version: offlineCopy.version }],
+          }
+        : undefined,
+    [id, offlineCopy],
+  );
+  const detail: FileDetail | undefined = file.data ?? offlineDetail;
 
   useEffect(() => {
     if (detail && !counted.current) {
@@ -228,7 +232,7 @@ const PdfViewer = React.memo(function PdfViewer({
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(startPage);
   const [total, setTotal] = useState(0);
-  const [goTo, setGoTo] = useState<number | undefined>(startPage > 1 ? startPage : undefined);
+  const pdfRef = useRef<PdfRef>(null);
   const [pageInput, setPageInput] = useState(String(startPage));
   const [attempt, setAttempt] = useState(0);
   const handle = useRef<DownloadHandle | null>(null);
@@ -263,7 +267,8 @@ const PdfViewer = React.memo(function PdfViewer({
 
   const jump = () => {
     const n = Number(pageInput);
-    if (Number.isInteger(n) && n >= 1 && (!total || n <= total)) setGoTo(n);
+    // Jump with the viewer's command: changing the `page` prop would reload the whole file.
+    if (Number.isInteger(n) && n >= 1 && (!total || n <= total)) pdfRef.current?.setPage(n);
     else setPageInput(String(page));
   };
 
@@ -320,8 +325,9 @@ const PdfViewer = React.memo(function PdfViewer({
           onTouchCancel={() => onLockPage(false)}
         >
           <Pdf
+            ref={pdfRef}
             source={source!}
-            page={goTo}
+            page={startPage}
             minScale={1}
             maxScale={4}
             fitPolicy={0}
