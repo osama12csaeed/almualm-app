@@ -33,7 +33,7 @@ const config: ExpoConfig = {
     package: 'com.almualm.app',
     versionCode: VERSION_CODE,
     adaptiveIcon: {
-      backgroundColor: '#1d4ed8',
+      backgroundColor: '#ffffff',
       foregroundImage: './assets/android-icon-foreground.png',
       monochromeImage: './assets/android-icon-monochrome.png',
     },
@@ -47,7 +47,7 @@ const config: ExpoConfig = {
     'expo-font',
     [
       'expo-splash-screen',
-      { image: './assets/splash-icon.png', imageWidth: 180, backgroundColor: '#1d4ed8', dark: { backgroundColor: '#0b1220' } },
+      { image: './assets/splash-icon.png', imageWidth: 200, backgroundColor: '#ffffff' },
     ],
     'expo-sharing',
     ['expo-localization', { supportsRTL: true, forcesRTL: true }],

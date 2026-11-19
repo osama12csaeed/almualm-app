@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Linking, Pressable, RefreshControl, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
-import { Bell, BookOpenCheck, Search } from 'lucide-react-native';
+import { Bell, Search } from 'lucide-react-native';
 import { useConfig, useLatest, useNotices, useTree } from '@/api/hooks';
 import type { AppConfig, Banner } from '@/api/types';
 import { Screen } from '@/components/screen';
@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <Screen>
       <View style={[styles.top, { borderBottomColor: c.border }]}>
-        {look?.logo ? <Image source={{ uri: look.logo }} style={styles.logo} contentFit="contain" /> : <BookOpenCheck color={c.accent} size={30} />}
+        <Image source={look?.logo ? { uri: look.logo } : require('../../../assets/logo.png')} style={styles.logo} contentFit="contain" accessibilityIgnoresInvertColors />
         <Text size="lg" weight="bold" style={{ flex: 1 }} numberOfLines={1} accessibilityRole="header">
           {look?.app_name ?? 'المعلم التعليمي'}
         </Text>
@@ -244,7 +244,7 @@ function HomeSkeleton() {
 
 const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[4], minHeight: 60, borderBottomWidth: StyleSheet.hairlineWidth },
-  logo: { width: 36, height: 36 },
+  logo: { width: 40, height: 40 },
   dot: { position: 'absolute', top: 12, right: 12, width: 9, height: 9, borderRadius: 5 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3] },
   chip: { paddingHorizontal: space[4], minHeight: 40, justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1 },
