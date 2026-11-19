@@ -1,0 +1,31 @@
+// Calls the plugin the way src/api/hooks.ts does and checks the shapes the screens rely on.
+const base = process.argv[2];
+const ids = JSON.parse((await import('fs')).readFileSync(process.argv[3], 'utf8'));
+let fail = 0;
+const ok = (name, cond) => { console.log((cond ? '  ok   ' : '  FAIL ') + name); if (!cond) fail++; };
+const get = async (p) => { const r = await fetch(base + p); return [r.status, await r.json().catch(() => null)]; };
+const isNode = (n) => n && typeof n.id === 'number' && typeof n.title === 'string' && 'image' in n && typeof n.is_leaf === 'boolean';
+const isFile = (f) => f && typeof f.id === 'number' && typeof f.title === 'string' && typeof f.badge === 'string' && 'badge_color' in f && 'thumb' in f && 'modified' in f && 'date' in f;
+
+const [, cfg] = await get('/config');
+ok('config: version, look, home, ads, update, maintenance, links, push', cfg.content_version > 0 && cfg.look.app_name && Array.isArray(cfg.home.sections) && Array.isArray(cfg.home.banners) && cfg.home.curricula.every(isNode) && typeof cfg.ads.units.interstitial === 'string' && typeof cfg.update.min_code === 'number' && typeof cfg.maintenance.enabled === 'boolean' && typeof cfg.links.privacy === 'string' && Array.isArray(cfg.push.topics));
+const root = cfg.home.default_root;
+const [, tree] = await get(`/tree?root=${root}&v=${cfg.content_version}`);
+ok('tree: nested nodes with children[]', isNode(tree) && tree.children.every((g) => isNode(g) && Array.isArray(g.children)));
+const [, node] = await get(`/nodes/${ids.g10}`);
+ok('node: path + children', Array.isArray(node.path) && node.path[0].id === root && node.children.every(isNode));
+const [, nf] = await get(`/nodes/${ids.chem}/files`);
+ok('node files: node + files[]', nf.node.id === ids.chem && nf.files.length === 4 && nf.files.every(isFile));
+const [, fd] = await get(`/files/${ids.p1}`);
+ok('file: pdfs[{url,name,size}] + html + link', isFile(fd) && fd.pdfs.every((p) => /^https?:\/\//.test(p.url) && typeof p.name === 'string' && 'size' in p) && typeof fd.html === 'string' && typeof fd.link === 'string');
+const [, latest] = await get(`/latest?root=${root}&count=5`);
+ok('latest: files[]', Array.isArray(latest) && latest.every(isFile));
+const [, search] = await get(`/search?q=${encodeURIComponent('الكيمياء')}&root=${root}`);
+ok('search: files[]', Array.isArray(search) && search.length > 0 && search.every(isFile));
+const [, notices] = await get('/notices');
+ok('notices: list', Array.isArray(notices));
+const r = await fetch(base + '/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file_id: ids.p1, page: 3, message: 'صفحة ناقصة', app_version: '1.0.0 (1)', website: '' }) });
+ok('report: POST returns {ok:true}', r.status === 200 && (await r.json()).ok === true);
+const [s404, e404] = await get('/files/999999');
+ok('errors carry an Arabic message the app shows', s404 === 404 && /[؀-ۿ]/.test(e404.message));
+process.exit(fail ? 1 : 0);

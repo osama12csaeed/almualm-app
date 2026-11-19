@@ -1,0 +1,71 @@
+import { existsSync } from 'fs';
+import type { ExpoConfig } from 'expo/config';
+
+/**
+ * Build-time settings. Everything that can change without a new release
+ * (colours, home sections, ads units, update prompts, maintenance) comes from
+ * the WordPress plugin at runtime instead.
+ */
+
+// Your site. The app reads /wp-json/almualm-app/v1 from here.
+const SITE_URL = process.env.ALMUALM_SITE_URL || 'https://www.almualm.com';
+
+// AdMob *App ID* (not a unit ID). It is compiled into the APK, so it lives here.
+// Google's sample ID is used until you paste yours (AdMob → Apps → App settings).
+const ADMOB_ANDROID_APP_ID = process.env.ADMOB_ANDROID_APP_ID || 'ca-app-pub-3940256099942544~3347511713';
+
+// Push needs google-services.json from Firebase (Project settings → Your apps → Android).
+const hasFirebase = existsSync('./google-services.json');
+
+const VERSION = '1.0.0';
+const VERSION_CODE = 1; // raise by 1 for every Play upload; matches "versionCode" in the plugin's update settings.
+
+const config: ExpoConfig = {
+  name: 'المعلم التعليمي',
+  slug: 'almualm',
+  scheme: 'almualm',
+  version: VERSION,
+  orientation: 'portrait',
+  icon: './assets/icon.png',
+  userInterfaceStyle: 'automatic',
+  backgroundColor: '#ffffff',
+  android: {
+    package: 'com.almualm.app',
+    versionCode: VERSION_CODE,
+    adaptiveIcon: {
+      backgroundColor: '#1d4ed8',
+      foregroundImage: './assets/android-icon-foreground.png',
+      monochromeImage: './assets/android-icon-monochrome.png',
+    },
+    predictiveBackGestureEnabled: false,
+    permissions: ['android.permission.POST_NOTIFICATIONS'],
+    blockedPermissions: ['android.permission.RECORD_AUDIO', 'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.WRITE_EXTERNAL_STORAGE'],
+    ...(hasFirebase ? { googleServicesFile: './google-services.json' } : {}),
+  },
+  plugins: [
+    'expo-router',
+    'expo-font',
+    [
+      'expo-splash-screen',
+      { image: './assets/splash-icon.png', imageWidth: 180, backgroundColor: '#1d4ed8', dark: { backgroundColor: '#0b1220' } },
+    ],
+    'expo-sharing',
+    ['expo-localization', { supportsRTL: true, forcesRTL: true }],
+    'expo-image',
+    ['expo-build-properties', { android: { usesCleartextTraffic: false } }],
+    [
+      'react-native-google-mobile-ads',
+      { androidAppId: ADMOB_ANDROID_APP_ID, delayAppMeasurementInit: true },
+    ],
+    ...(hasFirebase ? ['@react-native-firebase/app', '@react-native-firebase/messaging'] : []),
+  ],
+  experiments: { typedRoutes: true },
+  extra: {
+    siteUrl: SITE_URL,
+    apiBase: `${SITE_URL.replace(/\/$/, '')}/wp-json/almualm-app/v1`,
+    pushEnabled: hasFirebase,
+    versionCode: VERSION_CODE,
+  },
+};
+
+export default config;
