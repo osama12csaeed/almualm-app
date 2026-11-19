@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import Pdf from 'react-native-pdf';
 import {
-  Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, CloudOff, Copy, Download, ExternalLink, FileText, Flag,
+  Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, ChevronRight, CloudOff, Copy, Download, ExternalLink, FileText, Flag,
   Link as LinkIcon, Maximize2, MessageCircle, Send, Share2,
 } from 'lucide-react-native';
 import { useFile } from '@/api/hooks';
@@ -230,9 +230,11 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
   const [page, setPage] = useState(startPage);
   const [total, setTotal] = useState(0);
   const [attempt, setAttempt] = useState(0);
+  const [goTo, setGoTo] = useState(startPage);
   const handle = useRef<DownloadHandle | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const boxHeight = Math.min(height * 0.62, (width - space[4] * 2) * 1.42);
+  // Leaves room below so the page (download box, related files…) is always reachable.
+  const boxHeight = Math.min(height * 0.56, (width - space[4] * 2) * 1.42);
 
   useEffect(() => {
     setError(null);
@@ -280,10 +282,12 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
         </View>
       ) : (
         <>
-          {/* Horizontal paging: swipe sideways for pages; the post page itself scrolls up and down. */}
+          {/* The preview never captures touches, so swiping on it scrolls the post page.
+              Arrows turn pages; a tap opens full-screen reading (zoom, scroll, jump to page). */}
+          <View style={{ flex: 1 }} pointerEvents="none">
           <Pdf
             source={{ uri }}
-            page={startPage}
+            page={goTo}
             horizontal
             enablePaging
             fitPolicy={0}
@@ -296,10 +300,23 @@ function PdfEmbed({ detail, pdf, pdfIndex, onReady }: { detail: FileDetail; pdf:
             onPageChanged={onPage}
             onError={() => setError('الملف تالف أو غير مكتمل. أعد تحميله.')}
           />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="فتح الملف بملء الشاشة"
+            onPress={openFull}
+            style={[StyleSheet.absoluteFill, { bottom: 48 }]}
+          />
           <View style={[styles.viewerBar, { backgroundColor: c.bg, borderTopColor: c.border }]}>
+            <IconButton label="الصفحة السابقة" onPress={() => setGoTo(Math.max(1, page - 1))}>
+              <ChevronRight color={page > 1 ? c.text : c.border} size={22} />
+            </IconButton>
             <Text size="sm" weight="medium">
-              صفحة {page} من {total || '…'}
+              {page} / {total || '…'}
             </Text>
+            <IconButton label="الصفحة التالية" onPress={() => setGoTo(total ? Math.min(total, page + 1) : page + 1)}>
+              <ChevronLeft color={!total || page < total ? c.text : c.border} size={22} />
+            </IconButton>
             <View style={{ flex: 1 }} />
             <Pressable accessibilityRole="button" onPress={openFull} style={styles.fullBtn} hitSlop={6}>
               <Maximize2 color={c.accent} size={18} />
@@ -485,7 +502,7 @@ const styles = StyleSheet.create({
   crumb: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   chip: { paddingHorizontal: space[4], minHeight: 40, maxWidth: 240, justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1 },
   viewer: { borderWidth: 1, borderRadius: radius.lg, overflow: 'hidden' },
-  viewerBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[3], minHeight: 44, borderTopWidth: StyleSheet.hairlineWidth },
+  viewerBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[1], minHeight: 44, borderTopWidth: StyleSheet.hairlineWidth },
   fullBtn: { flexDirection: 'row', alignItems: 'center', gap: space[1], minHeight: 44 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[3], padding: space[5] },
   track: { height: 8, width: '80%', borderRadius: 4, overflow: 'hidden' },
