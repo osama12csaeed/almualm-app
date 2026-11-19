@@ -42,7 +42,7 @@ Until step 2 is done the app uses Google's test App ID. Never click your own liv
 
 - Google Play Console account ($25 once). Create the app with package **`com.almualm.app`**.
 - Play needs an **AAB signed with your own upload key**, not the APK above, which is signed with a test key and meant for phones and testers. The easiest route is `npx eas-cli build -p android --profile production` with a free Expo account. EAS creates and keeps the signing key for you.
-- Listing text, icon (512) and feature graphic are in `store/` and `replica/launch/listing.json`.
+- Listing text, icon (512) and feature graphic are in `store/` (listing text in `store/listing.json`).
 - Data safety: no accounts and no personal data. Declare AdMob (advertising ID) and Firebase (device token for notifications).
 - Each new upload: raise `VERSION_CODE` in `app.config.ts`. To force old versions to update, raise «أقل إصدار مسموح» in wp-admin.
 
