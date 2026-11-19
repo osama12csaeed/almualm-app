@@ -36,6 +36,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
+          profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: |
@@ -52,11 +53,13 @@ jobs:
             adb shell am start -W -a android.intent.action.VIEW -d "almualm://file/18251" com.almualm.app || true
             sleep 35
             adb exec-out screencap -p > smoke/post-top.png || true
-            adb shell input swipe 540 1700 540 500 600 || true
+            SIZE=$(adb shell wm size | grep -oE '[0-9]+x[0-9]+' | tail -1); W=${SIZE%x*}; H=${SIZE#*x}; echo "screen $W x $H"
+            X=$((W/2)); Y1=$((H*80/100)); Y2=$((H*25/100))
+            adb shell input swipe $X $Y1 $X $Y2 500 || true
             sleep 3
             adb exec-out screencap -p > smoke/post-middle.png || true
-            adb shell input swipe 540 1700 540 300 600 || true
-            adb shell input swipe 540 1700 540 300 600 || true
+            adb shell input swipe $X $Y1 $X $Y2 500 || true
+            adb shell input swipe $X $Y1 $X $Y2 500 || true
             sleep 3
             adb exec-out screencap -p > smoke/post-bottom.png || true
             (adb shell pidof com.almualm.app && echo "POST SCREEN: RUNNING" || echo "POST SCREEN: CRASHED") | tee -a smoke/result.txt
