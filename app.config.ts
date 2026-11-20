@@ -57,8 +57,7 @@ const config: ExpoConfig = {
       {
         android: {
           usesCleartextTraffic: false,
-          // Google Play: new apps and updates must target Android 16 (API 36).
-          compileSdkVersion: 36,
+          // Google Play: new apps and updates must target Android 16 (API 36); compileSdk stays at the SDK default.
           targetSdkVersion: 36,
           // SDK 58 turns on R8 by default; it stripped WorkManager's Room database (used by
           // Google Mobile Ads / Firebase) and the release app crashed on launch. Off for v1.
