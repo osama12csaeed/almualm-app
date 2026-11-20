@@ -33,6 +33,24 @@ export function safeUrl(url: string): string {
   }
 }
 
+/** True when the file starts with the PDF signature (%PDF, possibly after a few junk bytes). */
+function looksLikePdf(file: File): boolean {
+  try {
+    const h = file.open();
+    try {
+      const head = h.readBytesSync(1024);
+      for (let i = 0; i + 3 < head.length; i++) {
+        if (head[i] === 0x25 && head[i + 1] === 0x50 && head[i + 2] === 0x44 && head[i + 3] === 0x46) return true;
+      }
+      return false;
+    } finally {
+      h.close();
+    }
+  } catch {
+    return true; // Can't check: let the viewer decide.
+  }
+}
+
 export type DownloadHandle = { promise: Promise<string>; cancel: () => void };
 
 /**
@@ -77,6 +95,12 @@ export function getPdf(fileId: number, title: string, url: string, version = '',
         if (f.cancelled || !out || !file.exists || file.size === 0) {
           if (file.exists) file.delete();
           throw new Error(f.cancelled ? 'cancelled' : 'empty');
+        }
+        // Google Drive answers with a web page instead of the file when it refuses
+        // (private file, daily download limit). Never keep that as a PDF.
+        if (!looksLikePdf(file)) {
+          file.delete();
+          throw new Error('notpdf');
         }
         const pinned = existing?.pinned ?? older.some((d) => d.pinned);
         const entry: Download = { key, fileId, title, url, version, uri: file.uri, size: file.size, pinned, lastOpened: Date.now() };

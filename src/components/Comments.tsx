@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import * as Application from 'expo-application';
 import { useQueryClient } from '@tanstack/react-query';
-import { keys, postComment, useComments } from '@/api/hooks';
+import { keys, postComment, sendReport, useComments } from '@/api/hooks';
 import type { Comment } from '@/api/types';
 import { Button, Text } from './ui';
 import { SiteHeading } from './site';
@@ -35,13 +36,13 @@ export function Comments({ fileId, title }: { fileId: number; title: string }) {
 
       {shown.map((cm) => (
         <View key={cm.id} style={{ gap: space[2] }}>
-          <CommentCard comment={cm} onReply={data?.open ? () => setReplyTo(cm) : undefined} />
+          <CommentCard comment={cm} fileId={fileId} onReply={data?.open ? () => setReplyTo(cm) : undefined} />
           {(threads.byParent.get(cm.id) ?? [])
             .slice()
             .reverse()
             .map((r) => (
               <View key={r.id} style={{ marginStart: space[5] }}>
-                <CommentCard comment={r} />
+                <CommentCard comment={r} fileId={fileId} />
               </View>
             ))}
         </View>
@@ -66,8 +67,26 @@ export function Comments({ fileId, title }: { fileId: number; title: string }) {
   );
 }
 
-function CommentCard({ comment, onReply }: { comment: Comment; onReply?: () => void }) {
+function CommentCard({ comment, fileId, onReply }: { comment: Comment; fileId: number; onReply?: () => void }) {
   const { c, dark } = useTheme();
+  const [reported, setReported] = useState(false);
+  // Google Play: users must be able to report offensive comments from inside the app.
+  const report = () =>
+    Alert.alert('الإبلاغ عن تعليق', 'هل هذا التعليق مسيء أو غير مناسب؟ سيراجعه فريق الموقع.', [
+      { text: 'إلغاء', style: 'cancel' },
+      {
+        text: 'إبلاغ',
+        style: 'destructive',
+        onPress: () => {
+          setReported(true);
+          sendReport({
+            file_id: fileId,
+            message: `تعليق مسيء رقم ${comment.id} (${comment.author}): ${comment.content.slice(0, 300)}`,
+            app_version: Application.nativeApplicationVersion ?? '',
+          }).catch(() => setReported(false));
+        },
+      },
+    ]);
   return (
     <View style={[styles.card, { backgroundColor: c.surface, borderColor: comment.by_site ? c.accent : dark ? c.border : '#efefef' }]}>
       <Text style={{ fontSize: 17, lineHeight: 26, color: c.text }} numberOfLines={1}>
@@ -76,11 +95,18 @@ function CommentCard({ comment, onReply }: { comment: Comment; onReply?: () => v
       </Text>
       <Text style={{ fontSize: 12, color: c.textMuted }}>{relativeDate(comment.date)}</Text>
       <Text style={{ fontSize: 14, lineHeight: 24, color: c.text, marginTop: 6 }}>{comment.content}</Text>
-      {onReply ? (
-        <Pressable accessibilityRole="button" onPress={onReply} style={styles.reply} hitSlop={8}>
-          <Text style={{ fontSize: 16, color: c.text, textDecorationLine: 'underline' }}>رد</Text>
-        </Pressable>
-      ) : null}
+      <View style={styles.actionsRow}>
+        {onReply ? (
+          <Pressable accessibilityRole="button" onPress={onReply} style={styles.reply} hitSlop={8}>
+            <Text style={{ fontSize: 16, color: c.text, textDecorationLine: 'underline' }}>رد</Text>
+          </Pressable>
+        ) : null}
+        {!comment.by_site ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="الإبلاغ عن هذا التعليق" disabled={reported} onPress={report} style={styles.reply} hitSlop={8}>
+            <Text style={{ fontSize: 13, color: c.textMuted }}>{reported ? 'تم الإبلاغ، شكراً' : 'إبلاغ'}</Text>
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -167,6 +193,7 @@ function CommentForm({ fileId, requireEmail, replyTo, onCancelReply }: { fileId:
 
 const styles = StyleSheet.create({
   card: { padding: 14, borderRadius: 5, borderWidth: 1, gap: 2 },
+  actionsRow: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
   submit: { alignSelf: 'flex-start', minHeight: 44, paddingHorizontal: 22, borderRadius: 5, justifyContent: 'center' },
   reply: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingVertical: 4 },
   form: { gap: space[2], borderTopWidth: StyleSheet.hairlineWidth, paddingTop: space[3] },

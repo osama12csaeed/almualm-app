@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import NetInfo from '@react-native-community/netinfo';
 import { ChevronRight, Search } from 'lucide-react-native';
 import { IconButton, OfflineBanner, Text } from './ui';
+import { BottomNav } from './BottomNav';
 import { space, useTheme } from '@/theme/theme';
 
 export function useOnline(): boolean {
@@ -26,6 +27,7 @@ export function Screen({
   search,
   children,
   edges = ['top'],
+  nav,
 }: {
   title?: string;
   back?: boolean;
@@ -33,8 +35,11 @@ export function Screen({
   search?: boolean;
   children: React.ReactNode;
   edges?: ('top' | 'bottom')[];
+  /** Bottom bar; on by default for inner screens (not the full-screen reader). */
+  nav?: boolean;
 }) {
   const { c } = useTheme();
+  const showNav = nav ?? (Boolean(back) && !edges.includes('bottom'));
   const online = useOnline();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: c.bg }} edges={edges}>
@@ -61,6 +66,7 @@ export function Screen({
       ) : null}
       {!online ? <OfflineBanner /> : null}
       <View style={{ flex: 1 }}>{children}</View>
+      {showNav ? <BottomNav /> : null}
     </SafeAreaView>
   );
 }

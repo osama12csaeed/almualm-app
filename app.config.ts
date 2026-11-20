@@ -18,7 +18,7 @@ const ADMOB_ANDROID_APP_ID = process.env.ADMOB_ANDROID_APP_ID || 'ca-app-pub-394
 const hasFirebase = existsSync('./google-services.json');
 
 const VERSION = '1.0.0';
-const VERSION_CODE = 1; // raise by 1 for every Play upload; matches "versionCode" in the plugin's update settings.
+const VERSION_CODE = 2; // raise by 1 for every Play upload; matches "versionCode" in the plugin's update settings.
 
 const config: ExpoConfig = {
   name: 'المعلم التعليمي',
@@ -57,6 +57,9 @@ const config: ExpoConfig = {
       {
         android: {
           usesCleartextTraffic: false,
+          // Google Play: new apps and updates must target Android 16 (API 36).
+          compileSdkVersion: 36,
+          targetSdkVersion: 36,
           // SDK 58 turns on R8 by default; it stripped WorkManager's Room database (used by
           // Google Mobile Ads / Firebase) and the release app crashed on launch. Off for v1.
           enableMinifyInReleaseBuilds: false,

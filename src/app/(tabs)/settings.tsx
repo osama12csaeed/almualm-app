@@ -63,7 +63,10 @@ export default function Settings() {
         {links?.telegram ? <LinkRow label="قناة تيليجرام" url={links.telegram} /> : null}
         {links?.whatsapp ? <LinkRow label="واتساب" url={links.whatsapp} /> : null}
         {links?.facebook ? <LinkRow label="فيسبوك" url={links.facebook} /> : null}
-        {links?.privacy ? <LinkRow label="سياسة الخصوصية" url={links.privacy} /> : null}
+        <LinkRow label="سياسة الخصوصية" url={links?.privacy || 'https://www.almualm.com/privacy-policy'} />
+        <Text size="xs" muted style={{ marginTop: space[4], lineHeight: 20 }}>
+          التطبيق مبادرة تعليمية مستقلة تعرض محتوى موقع المعلم التعليمي، وليس تطبيقاً رسمياً ولا يتبع أي وزارة أو جهة حكومية.
+        </Text>
         <Text size="xs" muted center style={{ marginTop: space[5] }}>
           {config?.look.app_name ?? 'المعلم التعليمي'} · الإصدار {Application.nativeApplicationVersion ?? '1.0.0'} ({Application.nativeBuildVersion ?? '1'})
         </Text>

@@ -28,7 +28,11 @@ export type FileSummary = {
 };
 
 /** `version` changes whenever the file is replaced on the site (even under the same name). */
-export type Pdf = { url: string; name: string; size: number | null; version?: string };
+/** `host: 'gdrive'`: the file lives on Google Drive; `view` opens it there. */
+export type Pdf = { url: string; name: string; size: number | null; version?: string; host?: 'gdrive'; view?: string };
+
+/** Where a link on the site leads in the app. */
+export type Resolved = { type: 'node' | 'file'; id: number; title: string } | { type: 'link'; url: string };
 
 export type Crumb2 = { type: 'node'; id: number; title: string } | { type: 'link'; url: string; title: string };
 

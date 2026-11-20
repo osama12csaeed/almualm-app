@@ -124,7 +124,7 @@ export function cacheKey(fileId: number, url: string): string {
 
 /* ---------------- Text ---------------- */
 
-export type Block = { type: 'h' | 'p' | 'li'; text: string; href?: string };
+export type Block = { type: 'h' | 'p' | 'li'; text: string; href?: string } | { type: 'img'; src: string; ratio?: number };
 
 const ENTITIES: Record<string, string> = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#039;': "'", '&#8217;': '’', '&#8220;': '“', '&#8221;': '”', '&nbsp;': ' ', '&#8211;': '–' };
 
@@ -135,14 +135,32 @@ export function decodeEntities(s: string): string {
 }
 
 /** Turns the plugin's cleaned article HTML into simple blocks the app can draw natively. */
+function imageBlock(tag: string): Block | null {
+  const src = tag.match(/\bsrc="([^"]+)"/i)?.[1];
+  if (!src || !/^https?:\/\//i.test(decodeEntities(src))) return null;
+  const w = Number(tag.match(/\bwidth="(\d+)"/i)?.[1]);
+  const h = Number(tag.match(/\bheight="(\d+)"/i)?.[1]);
+  return { type: 'img', src: decodeEntities(src), ...(w > 0 && h > 0 ? { ratio: w / h } : {}) };
+}
+
 export function htmlToBlocks(html: string): Block[] {
   if (!html) return [];
   const out: Block[] = [];
-  const re = /<(h[2-5]|p|li|blockquote|td)[^>]*>([\s\S]*?)<\/\1>/gi;
+  // Text blocks and images, in page order (an image inside a paragraph comes before its text).
+  const re = /<(h[2-5]|p|li|blockquote|td|th)[^>]*>([\s\S]*?)<\/\1>|<img\b[^>]*>/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html))) {
+    if (!m[1]) {
+      const img = imageBlock(m[0]);
+      if (img) out.push(img);
+      continue;
+    }
     const tag = m[1].toLowerCase();
     const inner = m[2];
+    for (const tagImg of inner.match(/<img\b[^>]*>/gi) ?? []) {
+      const img = imageBlock(tagImg);
+      if (img) out.push(img);
+    }
     const href = inner.match(/<a[^>]+href="([^"]+)"/i)?.[1];
     const text = decodeEntities(inner.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''))
       .replace(/[ \t]+/g, ' ')

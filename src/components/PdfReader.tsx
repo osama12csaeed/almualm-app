@@ -34,7 +34,8 @@ export function PdfReader({ detail, pdf, pdfIndex, onToggleText }: { detail: Fil
     setProgress(0);
     handle.current = getPdf(detail.id, detail.title, pdf.url, pdf.version, setProgress);
     handle.current.promise.then(setUri).catch((e: Error) => {
-      if (e.message !== 'cancelled') setError('تعذّر تنزيل الملف. تحقق من الاتصال ثم أعد المحاولة.');
+      if (e.message === 'cancelled') return;
+      setError(pdf.host === 'gdrive' ? 'لم يسمح Google Drive بتنزيل الملف الآن. أعد المحاولة لاحقاً.' : 'تعذّر تنزيل الملف. تحقق من الاتصال ثم أعد المحاولة.');
     });
     return () => handle.current?.cancel();
   }, [detail.id, detail.title, pdf.url, pdf.version, attempt]);

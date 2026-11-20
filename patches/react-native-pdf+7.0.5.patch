@@ -1,0 +1,34 @@
+diff --git a/node_modules/react-native-pdf/android/src/main/java/org/wonday/pdf/PdfView.java b/node_modules/react-native-pdf/android/src/main/java/org/wonday/pdf/PdfView.java
+index c3d3245..ef8925f 100644
+--- a/node_modules/react-native-pdf/android/src/main/java/org/wonday/pdf/PdfView.java
++++ b/node_modules/react-native-pdf/android/src/main/java/org/wonday/pdf/PdfView.java
+@@ -23,6 +23,7 @@ import android.util.Log;
+ import android.net.Uri;
+ import android.util.AttributeSet;
+ import android.view.MotionEvent;
++import android.view.ViewParent;
+ import android.graphics.Canvas;
+ import android.graphics.pdf.PdfRenderer;
+ 
+@@ -561,6 +562,21 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
+         return parsed;
+     }
+ 
++    /**
++     * Inside a scrolling page (the post screen) the PDF keeps the whole gesture: claimed natively
++     * when the finger lands, so the page around it can't steal the scroll or the pinch.
++     */
++    @Override
++    public boolean dispatchTouchEvent(MotionEvent ev) {
++        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN || ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
++            ViewParent parent = getParent();
++            if (parent != null) {
++                parent.requestDisallowInterceptTouchEvent(true);
++            }
++        }
++        return super.dispatchTouchEvent(ev);
++    }
++
+     private void setTouchesEnabled(final boolean enabled) {
+         setTouchesEnabled(this, enabled);
+     }

@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Linking, Pressable, ScrollView, Share, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import Pdf, { type PdfRef } from 'react-native-pdf';
 import { Bookmark, BookmarkCheck, CheckCircle2, CloudOff, ExternalLink } from 'lucide-react-native';
-import { useFile } from '@/api/hooks';
+import { openSiteLink, useFile } from '@/api/hooks';
 import type { FileDetail, Pdf as PdfItem, ShareNetwork } from '@/api/types';
 import { Screen } from '@/components/screen';
 import { Button, EmptyState, ErrorState, IconButton, Skeleton, Text } from '@/components/ui';
@@ -82,13 +83,10 @@ function PostPage({ detail }: { detail: FileDetail }) {
   const pdf: PdfItem | undefined = detail.pdfs[Math.min(pdfIndex, detail.pdfs.length - 1)];
   const labels = detail.labels ?? { follow: 'للمزيد تابعنا في منصات التواصل الاجتماعي', related: 'ملفات اخرى', share: 'شارك المقالة', comments: 'التعليقات' };
   const [localUri, setLocalUri] = useState<string | null>(null);
-  // While a finger is on the PDF, the page stops scrolling so the PDF itself scrolls (like the site's PDF.js frame).
-  const [pageScroll, setPageScroll] = useState(true);
-  const lockPage = useCallback((locked: boolean) => setPageScroll(!locked), []);
   const contentW = width - space[4] * 2;
 
   return (
-    <ScrollView scrollEnabled={pageScroll} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+    <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
       {/* 1. Breadcrumb (one line, scrolls sideways like the site) */}
       {detail.breadcrumb?.length ? <Breadcrumb crumbs={detail.breadcrumb} title={detail.title} /> : null}
 
@@ -120,13 +118,19 @@ function PostPage({ detail }: { detail: FileDetail }) {
         </ScrollView>
       ) : null}
       {pdf ? (
-        <PdfViewer key={pdf.url + (pdf.version ?? '')} detail={detail} pdf={pdf} pdfIndex={pdfIndex} onReady={setLocalUri} onLockPage={lockPage} />
+        <PdfViewer key={pdf.url + (pdf.version ?? '')} detail={detail} pdf={pdf} pdfIndex={pdfIndex} onReady={setLocalUri} />
       ) : (
-        <View style={{ gap: space[3] }}>
-          {blocks.length ? null : <EmptyState icon={<Fa name="file-pdf" size={40} color={c.textMuted} />} title="لا يوجد ملف PDF في هذه الصفحة" />}
-          {detail.link ? <Button title="فتح على الموقع" variant="secondary" icon={<ExternalLink color={c.accent} size={18} />} onPress={() => Linking.openURL(detail.link)} /> : null}
-        </View>
+        // No PDF on this post: its content is shown below, as on the website.
+        blocks.length ? null : (
+          <View style={{ gap: space[3] }}>
+            <EmptyState icon={<Fa name="file-lines" size={40} color={c.textMuted} />} title="لا يوجد محتوى لعرضه" />
+            {detail.link ? <Button title="فتح على الموقع" variant="secondary" icon={<ExternalLink color={c.accent} size={18} />} onPress={() => Linking.openURL(detail.link)} /> : null}
+          </View>
+        )
       )}
+
+      {/* Post without a PDF: the content takes the viewer's place (the website shows it the same way). */}
+      {!pdf && blocks.length ? <PostText blocks={blocks} /> : null}
 
       {/* 4. .file-download-container */}
       {pdf ? <DownloadBox detail={detail} pdf={pdf} localUri={localUri} /> : null}
@@ -162,7 +166,7 @@ function PostPage({ detail }: { detail: FileDetail }) {
       ) : null}
 
       {/* 8. Post text (the site shows it under the share box) */}
-      {blocks.length ? <PostText blocks={blocks} /> : null}
+      {pdf && blocks.length ? <PostText blocks={blocks} /> : null}
 
       {/* 9. Comments */}
       {detail.comments ? <Comments fileId={detail.id} title={labels.comments} /> : null}
@@ -200,7 +204,7 @@ function Breadcrumb({ crumbs, title }: { crumbs: NonNullable<FileDetail['breadcr
             onPress={() =>
               cr.type === 'node'
                 ? router.push({ pathname: '/node/[id]', params: { id: String(cr.id), title: cr.title } })
-                : Linking.openURL(cr.url).catch(() => {})
+                : openSiteLink(cr.url)
             }
           >
             <Text style={link}>{cr.title}</Text>
@@ -221,8 +225,8 @@ function Breadcrumb({ crumbs, title }: { crumbs: NonNullable<FileDetail['breadcr
  * Memoised so the page's scroll lock (state in the parent) doesn't re-render the viewer.
  */
 const PdfViewer = React.memo(function PdfViewer({
-  detail, pdf, pdfIndex, onReady, onLockPage,
-}: { detail: FileDetail; pdf: PdfItem; pdfIndex: number; onReady: (uri: string) => void; onLockPage: (locked: boolean) => void }) {
+  detail, pdf, pdfIndex, onReady,
+}: { detail: FileDetail; pdf: PdfItem; pdfIndex: number; onReady: (uri: string) => void }) {
   const { c, dark } = useTheme();
   const { height } = useWindowDimensions();
   const saved = getState().progress[detail.id];
@@ -237,8 +241,8 @@ const PdfViewer = React.memo(function PdfViewer({
   const [attempt, setAttempt] = useState(0);
   const handle = useRef<DownloadHandle | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // The site's frame is 800px tall; on a phone keep a little of the page visible below it.
-  const frameHeight = Math.min(800, Math.round(height * 0.78));
+  // Tall like the site's 800px frame, while leaving page above/below it to grab and scroll the page.
+  const frameHeight = Math.min(800, Math.round(height * 0.68));
 
   useEffect(() => {
     setError(null);
@@ -250,12 +254,12 @@ const PdfViewer = React.memo(function PdfViewer({
         onReady(u);
       })
       .catch((e: Error) => {
-        if (e.message !== 'cancelled') setError('تعذّر تحميل الملف. تحقق من الاتصال ثم أعد المحاولة.');
+        if (e.message === 'cancelled') return;
+        if (pdf.host === 'gdrive') setError('لم يسمح Google Drive بتنزيل الملف الآن (قد يكون حد التنزيل اليومي). أعد المحاولة لاحقاً أو افتحه في Google Drive.');
+        else setError('تعذّر تحميل الملف. تحقق من الاتصال ثم أعد المحاولة.');
       });
     return () => handle.current?.cancel();
-  }, [detail.id, detail.title, pdf.url, pdf.version, attempt, onReady]);
-
-  useEffect(() => () => onLockPage(false), [onLockPage]);
+  }, [detail.id, detail.title, pdf.url, pdf.version, pdf.host, attempt, onReady]);
 
   const onPage = (p: number, n: number) => {
     setPage(p);
@@ -305,7 +309,19 @@ const PdfViewer = React.memo(function PdfViewer({
       </View>
 
       {error ? (
-        <EmptyState icon={<CloudOff color={c.textMuted} size={40} />} title="لم يكتمل التحميل" body={error} action={<Button title="إعادة المحاولة" onPress={() => setAttempt((a) => a + 1)} />} />
+        <EmptyState
+          icon={<CloudOff color={c.textMuted} size={40} />}
+          title="لم يكتمل التحميل"
+          body={error}
+          action={
+            <View style={{ gap: space[2], alignSelf: 'stretch' }}>
+              <Button title="إعادة المحاولة" onPress={() => setAttempt((a) => a + 1)} />
+              {pdf.view ? (
+                <Button title="فتح في Google Drive" variant="secondary" icon={<ExternalLink color={c.accent} size={18} />} onPress={() => Linking.openURL(pdf.view!).catch(() => {})} />
+              ) : null}
+            </View>
+          }
+        />
       ) : !uri ? (
         <View style={styles.center} accessibilityLiveRegion="polite">
           <Fa name="file-pdf" size={38} color={c.accent} />
@@ -318,12 +334,9 @@ const PdfViewer = React.memo(function PdfViewer({
           </Text>
         </View>
       ) : (
-        <View
-          style={{ flex: 1 }}
-          onTouchStart={() => onLockPage(true)}
-          onTouchEnd={() => onLockPage(false)}
-          onTouchCancel={() => onLockPage(false)}
-        >
+        // The PDF claims its own touches natively (patches/react-native-pdf): a finger on the PDF
+        // scrolls and zooms the PDF, a finger anywhere else scrolls the page.
+        <View style={{ flex: 1 }}>
           <Pdf
             ref={pdfRef}
             source={source!}
@@ -415,7 +428,7 @@ function FollowIcon({ network, url }: { network: string; url: string }) {
   const f = FOLLOW[network];
   return (
     <Pressable accessibilityRole="link" accessibilityLabel={network} onPress={() => Linking.openURL(url).catch(() => {})} hitSlop={6} style={[styles.followIcon, { backgroundColor: f?.bg ?? '#6c757d' }]}>
-      {f ? <Fa name={f.icon} brand size={16} color="#ffffff" /> : <Fa name="link" size={14} color="#ffffff" />}
+      {f ? <Fa name={f.icon} brand size={14} color="#ffffff" /> : <Fa name="link" size={13} color="#ffffff" />}
     </Pressable>
   );
 }
@@ -454,10 +467,11 @@ function ShareSection({ title, link, postTitle, networks }: { title: string; lin
   const { c, dark } = useTheme();
   const { width } = useWindowDimensions();
   const [copied, setCopied] = useState(false);
-  const btnW = (width - space[4] * 2 - 30 - 10) / 2;
+  // Three small buttons per row so the box fits any phone.
+  const btnW = Math.floor((width - space[4] * 2 - 24 - 2 - 16) / 3);
   return (
     <View style={[styles.shareBox, { borderColor: dark ? c.border : '#dddddd', backgroundColor: c.bg }]}>
-      <Text center style={{ color: c.text, fontSize: 20, lineHeight: 30, marginBottom: 14 }}>
+      <Text center style={{ color: c.text, fontSize: 16, lineHeight: 24, marginBottom: 10 }}>
         {title}
       </Text>
       <View style={styles.shareGrid}>
@@ -482,8 +496,10 @@ function ShareSection({ title, link, postTitle, networks }: { title: string; lin
               }}
               style={({ pressed }) => [styles.shareBtn, { width: btnW, backgroundColor: s.bg, opacity: pressed ? 0.85 : 1 }]}
             >
-              <Fa name={done ? 'check' : s.icon} brand={!done && s.brand} size={14} color="#ffffff" />
-              <Text style={{ color: '#ffffff', fontSize: 12, fontFamily: font.medium }}>{done ? 'تم النسخ' : s.label}</Text>
+              <Fa name={done ? 'check' : s.icon} brand={!done && s.brand} size={12} color="#ffffff" />
+              <Text numberOfLines={1} style={{ color: '#ffffff', fontSize: 11, fontFamily: font.medium, flexShrink: 1 }}>
+                {done ? 'تم النسخ' : s.label}
+              </Text>
             </Pressable>
           );
         })}
@@ -499,8 +515,17 @@ function PostText({ blocks }: { blocks: ReturnType<typeof htmlToBlocks> }) {
   return (
     <View style={{ gap: 6 }}>
       {blocks.map((b, i) =>
-        b.href ? (
-          <Pressable key={i} accessibilityRole="link" onPress={() => Linking.openURL(b.href!)}>
+        b.type === 'img' ? (
+          <Image
+            key={i}
+            source={{ uri: b.src }}
+            style={{ width: '100%', aspectRatio: b.ratio ?? 1.5, borderRadius: 6, backgroundColor: c.surface }}
+            contentFit="contain"
+            cachePolicy="disk"
+            accessibilityIgnoresInvertColors
+          />
+        ) : b.href ? (
+          <Pressable key={i} accessibilityRole="link" onPress={() => openSiteLink(b.href!)}>
             <Text style={{ color: c.heading, fontSize: 15, lineHeight: 28, textDecorationLine: 'underline' }}>{b.text}</Text>
           </Pressable>
         ) : (
@@ -532,9 +557,9 @@ const styles = StyleSheet.create({
   sharer: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12 },
   sharerText: { flex: 1, fontSize: 15, lineHeight: 24, fontFamily: font.medium },
   sharerIcons: { flexDirection: 'row', gap: 8 },
-  followIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  shareBox: { borderWidth: 1, borderRadius: 10, padding: 15 },
-  shareGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
-  shareBtn: { height: 40, borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  followIcon: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  shareBox: { borderWidth: 1, borderRadius: 10, padding: 12 },
+  shareGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
+  shareBtn: { height: 32, borderRadius: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingHorizontal: 4 },
   report: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[2], minHeight: 44 },
 });

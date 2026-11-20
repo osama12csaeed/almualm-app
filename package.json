@@ -45,6 +45,7 @@
   "devDependencies": {
     "@types/node": "^22.20.5",
     "@types/react": "~19.3.0",
+    "patch-package": "^8.0.1",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -54,7 +55,8 @@
     "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON src/lib/*.test.ts",
     "lint": "expo lint",
     "build:apk": "eas build -p android --profile preview",
-    "build:play": "eas build -p android --profile production"
+    "build:play": "eas build -p android --profile production",
+    "postinstall": "patch-package"
   },
   "private": true
 }

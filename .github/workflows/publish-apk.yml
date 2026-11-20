@@ -35,8 +35,10 @@ jobs:
         run: |
           mkdir pub && cd pub
           git init -q -b apk
-          cp ../out/app-release.apk almualm-app.apk
+          cp "$(find ../out -name app-release.apk | head -1)" almualm-app.apk
           sha256sum almualm-app.apk > almualm-app.apk.sha256
+          AAB="$(find ../out -name app-release.aab | head -1)"
+          if [ -n "$AAB" ]; then cp "$AAB" almualm-app.aab; sha256sum almualm-app.aab > almualm-app.aab.sha256; fi
           echo "Built by run $RUN on $(date -u +%F)" > BUILD.txt
           git add -A
           git -c user.name="github-actions" -c user.email="actions@github.com" commit -qm "APK from run $RUN"

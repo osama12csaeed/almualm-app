@@ -79,7 +79,20 @@ export const useNode = (id: number) => useQuery({ queryKey: keys.node(id), query
 export const useNodeFiles = (id: number, enabled = true) =>
   useQuery({ queryKey: keys.files(id), queryFn: () => api<NodeFiles>(`/nodes/${id}/files`, { timeoutMs: 30000 }), enabled });
 
-export const useFile = (id: number) => useQuery({ queryKey: keys.file(id), queryFn: () => api<FileDetail>(`/files/${id}`) });
+// The first open after an edit makes the plugin read the website's page: allow it time.
+export const useFile = (id: number) => useQuery({ queryKey: keys.file(id), queryFn: () => api<FileDetail>(`/files/${id}`, { timeoutMs: 35000 }) });
+
+/** Opens a link from the site inside the app when it is a section or a file, otherwise in the browser. */
+export async function openSiteLink(url: string) {
+  const { router } = await import('expo-router');
+  const { Linking } = await import('react-native');
+  try {
+    const r = await api<import('./types').Resolved>('/resolve', { params: { url }, timeoutMs: 8000 });
+    if (r.type === 'node') return router.push({ pathname: '/node/[id]', params: { id: String(r.id), title: r.title } });
+    if (r.type === 'file') return router.push({ pathname: '/file/[id]', params: { id: String(r.id) } });
+  } catch {}
+  Linking.openURL(url).catch(() => {});
+}
 
 export const useLatest = (root: number, count: number) =>
   useQuery({ queryKey: keys.latest(root), queryFn: () => api<FileSummary[]>('/latest', { params: { root, count } }), enabled: root > 0 });
@@ -94,7 +107,7 @@ export const useSearch = (q: string, root: number) =>
   });
 
 export const useNotices = () =>
-  useQuery({ queryKey: keys.notices, queryFn: () => api<Notice[]>('/notices'), staleTime: 60 * 1000 });
+  useQuery({ queryKey: keys.notices, queryFn: () => api<Notice[]>('/notices'), staleTime: 30 * 1000, refetchOnMount: 'always', refetchInterval: 5 * 60 * 1000 });
 
 export const useComments = (id: number, enabled = true) =>
   useQuery({ queryKey: keys.comments(id), queryFn: () => api<CommentsResponse>(`/files/${id}/comments`), staleTime: 60 * 1000, enabled });
