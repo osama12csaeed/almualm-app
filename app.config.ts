@@ -39,7 +39,8 @@ const config: ExpoConfig = {
     },
     predictiveBackGestureEnabled: false,
     permissions: ['android.permission.POST_NOTIFICATIONS'],
-    blockedPermissions: ['android.permission.SYSTEM_ALERT_WINDOW', 'android.permission.RECORD_AUDIO', 'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.WRITE_EXTERNAL_STORAGE'],
+    // AD_ID / ADSERVICES: Families policy, the advertising ID is never used.
+    blockedPermissions: ['com.google.android.gms.permission.AD_ID', 'android.permission.ACCESS_ADSERVICES_AD_ID', 'android.permission.ACCESS_ADSERVICES_ATTRIBUTION', 'android.permission.ACCESS_ADSERVICES_TOPICS', 'android.permission.SYSTEM_ALERT_WINDOW', 'android.permission.RECORD_AUDIO', 'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.WRITE_EXTERNAL_STORAGE'],
     ...(hasFirebase ? { googleServicesFile: './google-services.json' } : {}),
   },
   plugins: [

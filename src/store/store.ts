@@ -22,6 +22,8 @@ export type State = {
     saveDirUri: string | null; // folder the student picked for «تحميل PDF»
     commentName: string;
     commentEmail: string;
+    /** Neutral age screen before commenting (Google Play Families policy). null = not asked yet. */
+    birthYear: number | null;
   };
   favFiles: Record<string, SavedFile>;
   favNodes: Record<string, SavedNode>;
@@ -35,7 +37,7 @@ const KEY = 'almualm-store-v1';
 
 const initial: State = {
   hydrated: false,
-  settings: { theme: null, rootId: null, gradeId: null, notifications: true, cacheCapMB: 400, fitWidth: true, saveDirUri: null, commentName: '', commentEmail: '' },
+  settings: { theme: null, rootId: null, gradeId: null, notifications: true, cacheCapMB: 400, fitWidth: true, saveDirUri: null, commentName: '', commentEmail: '', birthYear: null },
   favFiles: {},
   favNodes: {},
   progress: {},

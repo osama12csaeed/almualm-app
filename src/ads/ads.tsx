@@ -25,13 +25,16 @@ let lastConfigKey = '';
 
 export async function initAds(ads: AppConfig['ads']) {
   if (!ads.enabled) return;
-  const key = `${ads.child_directed}|${ads.max_rating}`;
+  // The app carries primary-school material, so Google Play's Families policy applies to every
+  // user: child-directed, G-rated, non-personalised ads only, whatever the plugin says
+  // (the advertising ID permission is also removed in app.config.ts).
+  const key = 'families';
   if (initialised && key === lastConfigKey) return;
   lastConfigKey = key;
   await mobileAds().setRequestConfiguration({
-    maxAdContentRating: MaxAdContentRating[ads.max_rating] ?? MaxAdContentRating.G,
-    tagForChildDirectedTreatment: ads.child_directed,
-    tagForUnderAgeOfConsent: ads.child_directed,
+    maxAdContentRating: MaxAdContentRating.G,
+    tagForChildDirectedTreatment: true,
+    tagForUnderAgeOfConsent: true,
   });
   if (!initialised) {
     await mobileAds().initialize();
@@ -58,7 +61,7 @@ export function AdBanner({ placement }: { placement: Placement }) {
       <BannerAd
         unitId={unitId}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        requestOptions={{ requestNonPersonalizedAdsOnly: ads.child_directed }}
+        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
         onAdFailedToLoad={() => setFailed(true)}
       />
     </View>
@@ -78,7 +81,7 @@ export function useInterstitialOnOpen() {
 
   useEffect(() => {
     if (!unit || !ads) return;
-    const ad = InterstitialAd.createForAdRequest(unit, { requestNonPersonalizedAdsOnly: ads.child_directed });
+    const ad = InterstitialAd.createForAdRequest(unit, { requestNonPersonalizedAdsOnly: true });
     adRef.current = ad;
     loaded.current = false;
     const subs = [

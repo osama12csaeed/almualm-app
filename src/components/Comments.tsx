@@ -111,6 +111,37 @@ function CommentCard({ comment, fileId, onReply }: { comment: Comment; fileId: n
   );
 }
 
+function AgeScreen() {
+  const { c } = useTheme();
+  const [year, setYear] = useState('');
+  const now = new Date().getFullYear();
+  const n = Number(year);
+  const valid = /^\d{4}$/.test(year) && n >= now - 100 && n <= now;
+  return (
+    <View style={[styles.form, { borderColor: c.border }]}>
+      <Text style={{ color: c.heading, fontSize: 20, lineHeight: 30 }}>اترك تعليقاً</Text>
+      <Text size="sm">ما سنة ميلادك؟</Text>
+      <TextInput
+        value={year}
+        onChangeText={(t) => setYear(t.replace(/[^0-9٠-٩]/g, '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).slice(0, 4))}
+        placeholder="مثال: 2008"
+        placeholderTextColor={c.textMuted}
+        keyboardType="number-pad"
+        accessibilityLabel="سنة الميلاد"
+        style={[styles.input, { color: c.text, borderColor: c.borderInput, backgroundColor: c.bg, fontFamily: font.regular }]}
+      />
+      <Pressable
+        accessibilityRole="button"
+        disabled={!valid}
+        onPress={() => actions.setSettings({ birthYear: n })}
+        style={({ pressed }) => [styles.submit, { backgroundColor: c.accent, opacity: !valid ? 0.5 : pressed ? 0.8 : 1 }]}
+      >
+        <Text style={{ color: '#ffffff', fontSize: 15 }}>متابعة</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 function CommentForm({ fileId, requireEmail, replyTo, onCancelReply }: { fileId: number; requireEmail: boolean; replyTo: Comment | null; onCancelReply: () => void }) {
   const { c } = useTheme();
   const qc = useQueryClient();
@@ -142,6 +173,18 @@ function CommentForm({ fileId, requireEmail, replyTo, onCancelReply }: { fileId:
   };
 
   const input = [styles.input, { color: c.text, borderColor: c.borderInput, backgroundColor: c.bg }];
+  // Neutral age screen (Google Play Families policy): asked once, before the first comment.
+  // Under 13: comments can be read but not written, so no name or email is collected from children.
+  if (saved.birthYear === null) return <AgeScreen />;
+  if (new Date().getFullYear() - saved.birthYear < 13) {
+    return (
+      <View style={[styles.form, { borderColor: c.border }]}>
+        <Text size="sm" muted>
+          كتابة التعليقات متاحة لمن أعمارهم 13 سنة فأكثر. يمكنك قراءة التعليقات، أو اطلب من أحد والديك أو معلمك كتابة سؤالك.
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={[styles.form, { borderColor: c.border }]}>
       <Text style={{ color: c.heading, fontSize: 20, lineHeight: 30 }}>{replyTo ? `رد على ${replyTo.author}` : 'اترك تعليقاً'}</Text>
