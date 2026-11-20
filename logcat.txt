@@ -1,0 +1,345 @@
+11-20 08:02:52.796  1678  2753 W AiAiFed : java.lang.IllegalArgumentException: Unsupported response code3
+11-20 08:02:52.965  3249  3249 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-20 08:02:52.978  3249  3249 I AndroidRuntime: Using default boot image
+11-20 08:02:52.982  3249  3249 I AndroidRuntime: Leaving lock profiling enabled
+11-20 08:02:53.240  1796  2227 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.dreamx].
+11-20 08:02:53.240  1796  2227 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.dreamx
+11-20 08:02:53.241  1796  2227 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.launcherx].
+11-20 08:02:53.241  1796  2227 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.launcherx
+11-20 08:02:53.253  1444  3178 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+11-20 08:02:53.329  3249  3249 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-20 08:02:53.330  3249  3249 W Monkey  : args: [-p, com.almualm.app, -c, android.intent.category.LAUNCHER, 1]
+11-20 08:02:53.331  3249  3249 W Monkey  :  arg: "com.almualm.app"
+11-20 08:02:53.331  3249  3249 W Monkey  : data="com.almualm.app"
+11-20 08:02:53.555   522   595 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.almualm.app/.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-20 08:02:53.627   846   877 V WindowManagerShell: Transition requested: android.os.BinderProxy@15e2e06 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.almualm.app/.MainActivity } baseActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} topActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} numActivities=1 lastActiveTime=53650 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@5c39cc7} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{6f892f4 com.almualm.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-20 08:02:53.758  1444  1540 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+11-20 08:02:54.189  3249  3249 I AndroidRuntime: VM exiting with result code 0.
+11-20 08:02:54.254  1444  1540 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+11-20 08:02:54.293  3374  3374 I com.almualm.app: Using CollectorTypeCC GC.
+11-20 08:02:54.294  3374  3374 W com.almualm.app: Unexpected CPU variant for x86: x86_64.
+11-20 08:02:54.294  3374  3374 W com.almualm.app: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+11-20 08:02:54.336  3374  3374 E com.almualm.app: Not starting debugger since process cannot load the jdwp agent.
+11-20 08:02:54.369   522  2625 D CoreBackPreview: Window{42ae099 u0 Splash Screen com.almualm.app}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@6f785c4, mPriority=0, mIsAnimationCallback=false}
+11-20 08:02:54.554  1678  2830 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+11-20 08:02:54.564  1444  1540 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+11-20 08:02:54.573  1678  2752 W AiAiFed : java.lang.IllegalArgumentException: Unsupported response code3
+11-20 08:02:54.574  1678  2753 W AiAiFed : java.lang.IllegalArgumentException: Unsupported response code3
+11-20 08:02:54.654  1678  2830 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+11-20 08:02:54.663   522   552 I ActivityManager: Start proc 3374:com.almualm.app/u0a192 for next-top-activity {com.almualm.app/com.almualm.app.MainActivity}
+11-20 08:02:55.068   522   541 V WindowManager: Sent Transition #7 createdAt=11-20 08:02:53.515 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.almualm.app/.MainActivity } baseActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} topActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.almualm.app/com.almualm.app.MainActivity} numActivities=1 lastActiveTime=53650 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{6b20f5b Task{fb02725 #8 type=standard A=10192:com.almualm.app}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{5e073f8 com.almualm.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-20 08:02:55.068   522   541 V WindowManager:     info={id=7 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{6b20f5b Task{fb02725 #8 type=standard A=10192:com.almualm.app}}} m=OPEN f=NONE leash=Surface(name=Task=8)/@0xd077b11 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{db720d1 Task{9713308 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xed27831 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-20 08:02:55.094  3374  3374 D nativeloader: Configuring clns-6 for other apk /data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/lib/x86_64:/data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.almualm.app
+11-20 08:02:55.131  3374  3374 V GraphicsEnvironment: ANGLE GameManagerService for com.almualm.app: false
+11-20 08:02:55.131  3374  3374 V GraphicsEnvironment: com.almualm.app is not listed in per-application setting
+11-20 08:02:55.237  3374  3374 D ReactNativeFirebaseApp: received application context.
+11-20 08:02:55.507  3374  3374 W SoLoader: Initializing SoLoader: 0
+11-20 08:02:55.507  3374  3374 W SoLoader: Recording new base apk path: /data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/base.apk
+11-20 08:02:55.507  3374  3374 W SoLoader: Previously recorded 0 base apk paths.
+11-20 08:02:55.507  3374  3374 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-20 08:02:55.507  3374  3374 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-20 08:02:55.507  3374  3374 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/base.apk!/lib/x86_64]]
+11-20 08:02:55.528  3374  3374 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~xhOp_zxMtopLOsQxUTcptw==/com.almualm.app-VV3KcGXp9OZBzscwBnRC7A==/lib/x86_64 flags = 0]]
+11-20 08:02:55.528  3374  3374 I SoLoader: init finish: 4 SO sources prepared
+11-20 08:02:55.528  3374  3374 W SoLoader: SoLoader initialized: 8
+11-20 08:02:55.932  3374  3374 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Schedule
+11-20 08:02:55.936  3374  3374 W unknown:BridgelessReact: ReactHost{0}.attachSurface(surfaceId = 0)
+11-20 08:02:55.945  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask()
+11-20 08:02:55.945  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Start
+11-20 08:02:55.945  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getJSBundleLoader()
+11-20 08:02:55.946  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Creating BridgelessReactContext
+11-20 08:02:55.946  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Creating ReactInstance
+11-20 08:02:55.968  3374  3374 W unknown:BridgelessReact: ReactHost{0}.onHostResume(activity)
+11-20 08:02:55.968  3374  3374 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+11-20 08:02:56.036   522  1789 D CoreBackPreview: Window{899e28 u0 com.almualm.app/com.almualm.app.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1fe5a27, mPriority=0, mIsAnimationCallback=false}
+11-20 08:02:56.463  3374  3458 I ExpoModulesCore: ✅ AppContext was initialized
+11-20 08:02:56.511  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Loading JS Bundle
+11-20 08:02:56.511  3374  3458 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): DevSupportManager.onNewReactContextCreated()
+11-20 08:02:56.511  3374  3458 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Execute
+11-20 08:02:56.553  3374  3459 I ExpoModulesCore: ✅ JSI interop was installed
+11-20 08:02:56.563  3374  3459 I ExpoModulesCore: ✅ Expo Modules v2 installed 1 module(s) on globalThis.expo.modules
+11-20 08:02:56.624  1678  3342 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+11-20 08:02:56.669  3374  3374 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+11-20 08:02:56.669  3374  3374 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Executing ReactInstanceEventListeners
+11-20 08:02:56.675  3374  3459 I ExpoModulesCore: ✅ Constants were exported
+11-20 08:02:56.703  1520  3500 W ConfigFileUtils: Failed to read asset ChimeraModuleSetList.pb: java.io.FileNotFoundException: ChimeraModuleSetList.pb
+11-20 08:02:56.709  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenFooterManager
+11-20 08:02:56.714  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.uimanager.LayoutShadowNode
+11-20 08:02:56.716  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class expo.modules.kotlin.views.GroupViewManagerWrapper
+11-20 08:02:56.716  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenContainerViewManager
+11-20 08:02:56.717  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsNativeAdViewManager
+11-20 08:02:56.717  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ModalScreenViewManager
+11-20 08:02:56.718  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsMultiFormatBannerViewManager
+11-20 08:02:56.718  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaViewManager
+11-20 08:02:56.719  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaViewShadowNode
+11-20 08:02:56.720  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.safearea.SafeAreaViewManager
+11-20 08:02:56.720  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenViewManager
+11-20 08:02:56.721  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class expo.modules.kotlin.views.SimpleViewManagerWrapper
+11-20 08:02:56.722  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.reanimated.view.REASharedTransitionBoundaryManager
+11-20 08:02:56.722  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackViewManager
+11-20 08:02:56.723  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.stack.header.config.StackHeaderConfigViewManager
+11-20 08:02:56.723  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaProviderManager
+11-20 08:02:56.725  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.SearchBarManager
+11-20 08:02:56.725  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class org.wonday.pdf.PdfManager
+11-20 08:02:56.728  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.tabs.host.TabsHostViewManager
+11-20 08:02:56.730  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.stack.header.subview.StackHeaderSubviewViewManager
+11-20 08:02:56.730  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.scrollviewmarker.ScrollViewMarkerViewManager
+11-20 08:02:56.731  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class org.reactnative.maskedview.RNCMaskedViewManager
+11-20 08:02:56.732  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackHeaderConfigViewManager
+11-20 08:02:56.732  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.modals.formsheet.FormSheetContentWrapperViewManager
+11-20 08:02:56.733  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenContentWrapperManager
+11-20 08:02:56.733  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsMediaViewManager
+11-20 08:02:56.735  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsBannerAdViewManager
+11-20 08:02:56.736  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.stack.host.StackHostViewManager
+11-20 08:02:56.736  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackHeaderSubviewManager
+11-20 08:02:56.737  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.stack.screen.StackScreenViewManager
+11-20 08:02:56.738  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.modals.formsheet.FormSheetHostViewManager
+11-20 08:02:56.738  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenViewManager
+11-20 08:02:56.806  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$DefsViewManager
+11-20 08:02:56.813  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.VirtualViewManager$RenderableShadowNode
+11-20 08:02:56.814  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeMergeManager
+11-20 08:02:56.815  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.safeareaview.ReactSafeAreaViewManager
+11-20 08:02:56.816  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.gesturehandler.react.RNGestureHandlerDetectorViewManager
+11-20 08:02:56.835  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LinearGradientManager
+11-20 08:02:56.836  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeGaussianBlurManager
+11-20 08:02:56.844  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.progressbar.ReactProgressBarViewManager
+11-20 08:02:56.845  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollViewManager
+11-20 08:02:56.847  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactTextViewManager
+11-20 08:02:56.852  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeColorMatrixManager
+11-20 08:02:56.855  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollContainerViewManager
+11-20 08:02:56.857  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ClipPathViewManager
+11-20 08:02:56.860  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$SymbolManager
+11-20 08:02:56.868  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PatternManager
+11-20 08:02:56.870  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeBlendManager
+11-20 08:02:56.875  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.view.ReactViewManager
+11-20 08:02:56.894  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.SvgViewManager
+11-20 08:02:56.896  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.switchview.ReactSwitchManager
+11-20 08:02:56.900  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$UseViewManager
+11-20 08:02:56.902  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$CircleViewManager
+11-20 08:02:56.911  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TSpanViewManager
+11-20 08:02:56.923  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FilterManager
+11-20 08:02:56.927  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MarkerManager
+11-20 08:02:56.930  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.gesturehandler.react.RNGestureHandlerButtonViewManager
+11-20 08:02:56.932  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.modal.ReactModalHostManager
+11-20 08:02:56.938  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ForeignObjectManager
+11-20 08:02:56.939  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$EllipseViewManager
+11-20 08:02:56.948  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LineViewManager
+11-20 08:02:56.949  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeFloodManager
+11-20 08:02:56.959  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$GroupViewManager
+11-20 08:02:56.961  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextViewManager
+11-20 08:02:56.966  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ImageViewManager
+11-20 08:02:56.968  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeCompositeManager
+11-20 08:02:56.969  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.image.ReactImageManager
+11-20 08:02:56.971  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RadialGradientManager
+11-20 08:02:56.973  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MaskManager
+11-20 08:02:56.990  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.unimplementedview.ReactUnimplementedViewManager
+11-20 08:02:56.991  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RectViewManager
+11-20 08:02:56.994  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextPathViewManager
+11-20 08:02:56.996  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactScrollViewManager
+11-20 08:02:57.006  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeOffsetManager
+11-20 08:02:57.010  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PathViewManager
+11-20 08:02:57.011  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.drawer.ReactDrawerLayoutManager
+11-20 08:02:57.013  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.swiperefresh.SwipeRefreshLayoutManager
+11-20 08:02:57.018  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.textinput.ReactTextInputManager
+11-20 08:02:57.020  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.SelectableTextViewManager
+11-20 08:02:57.022  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.gesturehandler.react.RNGestureHandlerRootViewManager
+11-20 08:02:57.026  3374  3459 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.virtual.view.ReactVirtualViewManager
+11-20 08:02:57.219  3374  3459 I ReactNativeJS: Running "main"
+11-20 08:02:57.268  3374  3459 V AsyncStorageExpoMigration: No scoped database found
+11-20 08:02:57.406  3374  3374 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.uimanager.RootViewManager
+11-20 08:02:57.813   522  1782 D ConnectivityService: requestNetwork for uid/pid:10192/3374 activeRequest: null callbackRequest: 85 [NetworkRequest [ REQUEST id=86, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-20 08:02:57.822   522   759 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=86, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:57.822   522   759 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=86, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:57.822   522   759 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=86, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:57.822   522   759 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=86, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:57.954  1444  1538 E CCTFlatFileLogStore: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:02:57.996   522  2012 D ConnectivityService: requestNetwork for uid/pid:10192/3374 activeRequest: null callbackRequest: 87 [NetworkRequest [ REQUEST id=88, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-20 08:02:57.999   522   759 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=88, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:58.002   522   759 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=88, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:58.003   522   759 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=88, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:58.003   522   759 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=88, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: com.almualm.app UnderlyingNetworks: Null] ]
+11-20 08:02:58.058  3374  3374 I ReactNative: [GESTURE HANDLER] Initialize gesture handler for root view com.facebook.react.runtime.ReactSurfaceView{566eb64 V.E...... ......ID 0,0-1080,2400 #1}
+11-20 08:02:58.095  1444  1444 E GmsCoreLogger: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException
+11-20 08:02:58.095  1444  1444 E GmsCoreLogger: Caused by: java.util.concurrent.TimeoutException
+11-20 08:02:58.224  3374  3594 W com.almualm.app: Entry not found
+11-20 08:02:58.282   522   810 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10192, mPackageName='com.almualm.app, mAppProcessToken='null'}
+11-20 08:02:58.458  1056  1056 D CarrierSvcBindHelper: onPackageAdded: com.almualm.app
+11-20 08:02:58.477  1056  1378 D ImsResolver: maybeAddedImsService, packageName: com.almualm.app
+11-20 08:02:58.919  3374  3641 I cr_VariationsUtils: Failed reading seed file "/data/user/0/com.almualm.app/app_webview/variations_seed_new"
+11-20 08:02:58.919  3374  3641 I cr_VariationsUtils: Failed reading seed file "/data/user/0/com.almualm.app/app_webview/variations_seed"
+11-20 08:02:58.921  3374  3595 W com.almualm.app: Long monitor contention with owner OkHttp https://www.almualm.com/... (3594) at android.content.pm.PackageInfo android.webkit.WebViewFactory.getLoadedPackageInfo()(WebViewFactory.java:262) waiters=0 in android.webkit.WebViewFactoryProvider android.webkit.WebViewFactory.getProvider() for 749ms
+11-20 08:02:59.269  1444  3580 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:02:59.317  1444  3580 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:00.593  1520  3358 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:00.627  1520  3358 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:01.665   522  1782 I ImeTracker: com.almualm.app:7c79e242: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-20 08:03:01.665   522  1782 I ImeTracker: com.almualm.app:7c79e242: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-20 08:03:01.668   522   541 I ActivityTaskManager: Displayed com.almualm.app/.MainActivity for user 0: +8s117ms
+11-20 08:03:01.728  1569  1569 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.almualm.app fieldId=0 fieldName=null extras=null}, false)
+11-20 08:03:02.076   522  2012 D CoreBackPreview: Window{42ae099 u0 Splash Screen com.almualm.app}: Setting back callback null
+11-20 08:03:02.076   522  1197 W InputManager-JNI: Input channel object '42ae099 Splash Screen com.almualm.app (client)' was disposed without first being removed with the input manager!
+11-20 08:03:02.152  1520  3850 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:02.411  1520  3850 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:02.464  1812  3853 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+11-20 08:03:02.509  3374  3857 D ProfileInstaller: Installing profile for com.almualm.app
+11-20 08:03:02.655  1006  1030 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-20 08:03:03.384  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:03.384  1056  1056 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:03.806  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:04.095  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:04.575  3374  3382 I com.almualm.app: Background concurrent copying GC freed 373181(18MB) AllocSpace objects, 60(3096KB) LOS objects, 49% free, 9479KB/18MB, paused 26us,14us total 194.829ms
+11-20 08:03:05.102  1684  2495 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-20 08:03:05.778  1006  1030 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-20 08:03:06.155  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:06.155  1056  1056 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:06.579  1056  1056 D CarrierSvcBindHelper: onPackageModified: com.almualm.app
+11-20 08:03:06.656  1056  1378 D ImsResolver: maybeAddedImsService, packageName: com.almualm.app
+11-20 08:03:06.657  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:06.989  1056  1056 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-20 08:03:07.219   851   851 I SafetyLabelChangedBroadcastReceiver: received broadcast packageName: com.almualm.app, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+11-20 08:03:08.209  1520  2500 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:08.219  1520  3531 E constellation: java.io.IOException: AUTHENTICATION_FAILED
+11-20 08:03:08.440  4090  4159 E SuggestionsProvider: java.util.concurrent.TimeoutException: Waited 100 milliseconds (plus 155567 nanoseconds delay) for esy@a4db384[status=PENDING, info=[inputFuture=[gnz@bdfd76d[status=PENDING, delegate=[eve@d401fa2[status=PENDING]]]], function=[ceu@73d0433]]]
+11-20 08:03:08.548  1520  3359 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:08.773  1520  3359 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:09.534  1057  1077 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
+11-20 08:03:09.687  1678  2232 W AiAiAutofill: java.lang.SecurityException: caller is not user's Augmented Autofill Service
+11-20 08:03:09.719  1444  4078 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:09.780   522   550 E PackageManager: java.util.concurrent.TimeoutException: [Optimistic Bind] Didn't bind to resolver in time!
+11-20 08:03:09.868  1796  1796 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+11-20 08:03:09.868  1796  1796 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:10.163  1678  1678 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.almualm.app], userId:[0], reason:[package is added.].
+11-20 08:03:10.453   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:10.691  1444  4154 E dlpn    : RuntimeException while executing runnable dlqc{qze@2b5730} with executor MoreExecutors.directExecutor()
+11-20 08:03:10.691  1444  4154 E dlpn    : java.lang.NullPointerException: Attempt to get length of null array
+11-20 08:03:10.704  1796  2988 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+11-20 08:03:10.704  1796  2988 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:10.859  1444  1797 W Looper  : java.lang.RuntimeException: Handler (acdu) {e174f4} sendMessageAtTime() called with no mQueue
+11-20 08:03:10.861  1444  1797 W Looper  : java.lang.RuntimeException: Handler (acdu) {e174f4} sendMessageAtTime() called with no mQueue
+11-20 08:03:11.151  1796  2532 E cr_CronetUrlRequestContext: Exception in upload method
+11-20 08:03:11.182  1056  1056 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
+11-20 08:03:11.183  1056  1056 E PhoneInterfaceManager: isVoNrEnabled: CommandException: com.android.internal.telephony.CommandException: REQUEST_NOT_SUPPORTED
+11-20 08:03:11.198  1057  1077 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-20 08:03:11.353   522  2162 W FileUtils: android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
+11-20 08:03:11.461   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:12.124  1678  1678 I AiAiEcho: AppFetcherImpl onPackageChanged com.almualm.app.
+11-20 08:03:12.124  1678  3514 I AiAiEcho: AppIndexer Package:[com.almualm.app] UserProfile:[0] Enabled:[true].
+11-20 08:03:12.124  1678  3514 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.almualm.app], userId:[0], reason:[package is updated.].
+11-20 08:03:12.193  1444  4078 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:12.232  1520  3920 W GCM-GMS : Failed to get registration: java.io.IOException: AUTHENTICATION_FAILED
+11-20 08:03:12.252  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:12.257  1444  2262 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:12.283  1444  2787 W SemanticLocation: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 403518 nanoseconds delay) for dlnx@e6666fa[status=PENDING, info=[function=[bzrs@45634ab]]]
+11-20 08:03:12.355  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:12.358  1444  2262 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:12.607  1444  2262 W GLSUser : [AppCertManager] Exception while requesting key: 
+11-20 08:03:12.607  1444  2262 W GLSUser : java.io.IOException: Invalid device key response.
+11-20 08:03:13.004   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:13.198  4374  4406 E IndexablesProvider: java.lang.IllegalStateException: We should initialize FormFactorUtils before getting instance.
+11-20 08:03:13.280  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:13.492  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:14.504  1520  3500 W PhenotypeRegOp: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:14.766  4309  4441 W BugleRcs: android.content.pm.PackageManager$NameNotFoundException: com.google.android.ims
+11-20 08:03:15.522   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:15.756  1520  3924 W GCM-GMS : Failed to get direct boot token: java.io.IOException: AUTHENTICATION_FAILED
+11-20 08:03:15.852  1444  2240 E bwel    : java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:16.430  4246  4521 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:16.693   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:17.047  1520  4001 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:17.400  1520  4001 I BlockstoreStorage: Clearing Blockstore Data for package com.almualm.app [CONTEXT service_id=258 ]
+11-20 08:03:17.416  1520  3280 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+11-20 08:03:17.416  1520  3280 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+11-20 08:03:17.742  1520  3500 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ProxyGalProvider}
+11-20 08:03:17.742  1520  3500 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3061)
+11-20 08:03:17.742  1520  3500 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:3041)
+11-20 08:03:17.742  1520  3500 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:3024)
+11-20 08:03:17.742  1520  3500 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2966)
+11-20 08:03:17.742  1520  3500 W PeoplePU: Caused by: android.os.RemoteException: Remote stack trace:
+11-20 08:03:17.747   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:17.756  1520  4534 W PeoplePU: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
+11-20 08:03:18.994  1520  3501 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:19.008   522   612 E RoleControllerManager: java.util.concurrent.TimeoutException
+11-20 08:03:19.101  1520  3501 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:19.236  1444  4155 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/default_model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.236  1444  4155 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.369  1444  4155 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.369  1444  4155 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.789  1444  4155 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.789  1444  4155 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:19.971  1684  2495 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-20 08:03:19.971  1684  2495 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-20 08:03:20.016  1520  4607 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-20 08:03:20.082  1444  3559 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:20.139  1444  3559 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:21.568   522  1786 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10129.xml: open failed: ENOENT (No such file or directory)
+11-20 08:03:21.568   522  1786 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:22.144   522  2162 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10129.xml: open failed: ENOENT (No such file or directory)
+11-20 08:03:22.144   522  2162 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:22.202   157   167 E keystore2:     3: Error::Rc(r#SYSTEM_ERROR)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
+11-20 08:03:22.209  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
+11-20 08:03:22.525  1444  3011 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+11-20 08:03:22.922  1444  1545 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+11-20 08:03:23.133  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:23.310  1057  3440 E HardwareInfoFeatureProviderImpl: java.lang.NumberFormatException: For input string: "E"
+11-20 08:03:23.312  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:23.413  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController
+11-20 08:03:23.413  1057  3440 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.fuelgauge.batteryusage.BatteryChartPreferenceController.<init> [class android.content.Context, class java.lang.String]
+11-20 08:03:23.435  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
+11-20 08:03:23.435  1057  3440 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
+11-20 08:03:23.441  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.441  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.441  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.448  1057  3440 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-20 08:03:23.457  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.telephony.CallsDefaultSubscriptionController
+11-20 08:03:23.457  1057  3440 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.telephony.CallsDefaultSubscriptionController.<init> [class android.content.Context, class java.lang.String]
+11-20 08:03:23.470  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.470  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.470  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+11-20 08:03:23.475  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.NetworkProviderSimsCategoryController
+11-20 08:03:23.475  1057  3440 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.NetworkProviderSimsCategoryController.<init> [class android.content.Context, class java.lang.String]
+11-20 08:03:23.605  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.credentials.CredentialManagerPreferenceController
+11-20 08:03:23.605  1057  3440 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
+11-20 08:03:23.605  1057  3440 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1057_5,5,main] that has not called Looper.prepare()
+11-20 08:03:23.613  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.accessibility.VibrationMainSwitchPreferenceController
+11-20 08:03:23.613  1057  3440 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
+11-20 08:03:23.613  1057  3440 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1057_5,5,main] that has not called Looper.prepare()
+11-20 08:03:23.637  1057  3440 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+11-20 08:03:23.637  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+11-20 08:03:23.637  1057  3440 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.development.DevelopmentMemtagFooterPreferenceController
+11-20 08:03:24.151  1520  3501 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:24.225  1520  3501 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:25.323   522  1792 D CoreBackPreview: startBackNavigation currentTask=Task{fb02725 #8 type=standard A=10192:com.almualm.app}, topRunningActivity=ActivityRecord{a30f1c u0 com.almualm.app/.MainActivity t8}, callbackInfo=OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1fe5a27, mPriority=0, mIsAnimationCallback=false}, currentFocus=Window{899e28 u0 com.almualm.app/com.almualm.app.MainActivity}
+11-20 08:03:25.430   522  1792 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10129.xml: open failed: ENOENT (No such file or directory)
+11-20 08:03:25.430   522  1792 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-20 08:03:25.434   157   167 E keystore2:     3: Error::Rc(r#SYSTEM_ERROR)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:783)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:3041)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:3024)
+11-20 08:03:25.434  1520  3996 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2966)
+11-20 08:03:25.861  1444  3563 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+11-20 08:03:26.225  1796  2532 E cr_CronetUrlRequestContext: Exception in upload method
+11-20 08:03:26.403  1520  3500 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:26.546  1520  3500 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:27.157  1684  2495 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-20 08:03:27.240  1684  1922 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+11-20 08:03:27.252  1684  1922 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+11-20 08:03:28.530  4309  4771 W RcsClientLib: java.lang.IllegalStateException: JibeService Not Initialized
+11-20 08:03:28.530  4309  4771 W RcsClientLib: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3065)
+11-20 08:03:28.530  4309  4771 W RcsClientLib: 	at android.os.Parcel.createException(Parcel.java:3041)
+11-20 08:03:28.530  4309  4771 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:3024)
+11-20 08:03:28.530  4309  4771 W RcsClientLib: 	at android.os.Parcel.readException(Parcel.java:2966)
+11-20 08:03:28.530  4309  4771 W RcsClientLib: 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:3)
+11-20 08:03:28.910  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:28.983  1444  3563 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-20 08:03:29.036  4767  4767 E BugleRcsEngine: [2] JibeService.onDestroy: JibeService: onDestroy() unregister factory exception: java.lang.IllegalArgumentException: Receiver not registered: com.google.android.ims.receiver.sip.DebugOptionsReceiver@9eea637
